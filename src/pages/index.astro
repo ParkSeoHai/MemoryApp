@@ -1,14 +1,14 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.vue';
-import Home from '../views/Home.vue';
-import Footer from '../components/Footer.vue';
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.vue";
+import Home from "../views/Home.vue";
+import Footer from "../components/Footer.vue";
 ---
 
 <Layout>
-	<Header client:idle />
-	<main>
-		<Home client:idle />
-	</main>
-	<Footer client:idle />
+  <Header client:load />
+  <main>
+    <Home client:idle />
+  </main>
+  <Footer client:idle />
 </Layout>
