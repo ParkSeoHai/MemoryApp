@@ -4,6 +4,10 @@
     margin: 0 auto;
 }
 
+button {
+    cursor: pointer;
+}
+
 .btn {
     display: flex;
     align-items: center;

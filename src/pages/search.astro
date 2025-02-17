@@ -1,0 +1,20 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.vue';
+import SearchPage from '../views/Search.vue';
+import Footer from '../components/Footer.vue';
+---
+
+<Layout>
+	<Header client:idle />
+	<main>
+		<SearchPage client:idle />
+	</main>
+	<Footer client:idle />
+</Layout>
+
+<style>
+	#header {
+		color: #424242;
+	}
+</style>
