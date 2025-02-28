@@ -10,15 +10,15 @@
     font-size: 14px;
 }
 
-#header .nav-header > li:hover > span {
+#header .nav-header>li:hover>span {
     opacity: 0.7;
 }
 
-#header .nav-header > li {
+#header .nav-header>li {
     position: relative;
 }
 
-#header .nav-header > li:hover > .nav-header__dropdown {
+#header .nav-header>li:hover>.nav-header__dropdown {
     display: flex;
 }
 

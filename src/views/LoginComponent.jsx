@@ -56,39 +56,56 @@ function LoginComponent() {
   };
 
   return (
-    <>
-      <div className="flex">
-        <div className="flex-[1] bg-[#f8fafb] overflow-hidden">
-          <img
-            src="https://static-gcp.freepikcompany.com/web-app/media/freepik-6-2000.webp"
-            alt="login"
-            className=" w-full h-[920px] object-cover pointer-events-none brightness-75"
-          />
-        </div>
-        <div className="py-10 min-w-[450px]  px-[60px] flex flex-col items-center gap-[30px]">
+    <div className="min-h-screen flex">
+      {/* Left side - Image */}
+      <div className="hidden lg:block lg:w-1/2 relative">
+        <img
+          src="https://static-gcp.freepikcompany.com/web-app/media/freepik-6-2000.webp"
+          alt="login"
+          className="absolute inset-0 w-full h-full object-cover brightness-75"
+        />
+      </div>
+
+      {/* Right side - Login Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center">
+        <div className="w-full max-w-[450px] px-8 py-12 flex flex-col items-center">
+          {/* Logo */}
           <img
             src="https://www.freepik.com/v2/assets/freepik.8bacab41.svg"
             alt="logo"
-            className="w-[150px] h-[22px] object-cover cursor-pointer my-[50px]"
+            className="w-[150px] h-auto mb-12 cursor-pointer"
           />
-          <h1 className="mb-[32px] text-[20px] font-semibold ">Log in</h1>
-          <div
-            onClick={handleLoginByGoogle}
-            className="w-full flex items-center gap-[10px] px-[20px] py-[10px] border shadow-[inset_0_0_0_2px_#e3e9ed] border-[#c8c8c8] justify-center cursor-pointer">
-            <FaGoogle className="size-[18px]" />
-            <strong>Continue with Google</strong>
+
+          {/* Login Header */}
+          <h1 className="text-2xl font-semibold mb-8">Log in</h1>
+
+          {/* Social Login Buttons */}
+          <div className="w-full space-y-4">
+            <button
+              onClick={handleLoginByGoogle}
+              className="w-full flex items-center justify-center gap-3 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+              <FaGoogle className="text-xl" />
+              <span className="font-semibold">Continue with Google</span>
+            </button>
+
+            <button
+              onClick={handleLoginByGithub}
+              className="w-full flex items-center justify-center gap-3 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+              <FaGithub className="text-xl" />
+              <span className="font-semibold">Continue with Github</span>
+            </button>
           </div>
-          <div
-            onClick={handleLoginByGithub}
-            className="w-full flex items-center gap-[10px] px-[20px] py-[10px] border shadow-[inset_0_0_0_2px_#e3e9ed] border-[#c8c8c8] justify-center cursor-pointer ">
-            <FaGithub className="size-[18px]" />
-            <strong>Continue with Github</strong>
-          </div>
-          <div className="flex gap-[5px] pt-[20px] border-t w-full border-[#c8c8c8] justify-center">
-            <p className="font-medium">Don’t you have an account?</p>
-            <a href="/register" className="text-[#336AEA] font-bold">
-              Sign up
-            </a>
+
+          {/* Sign up Link */}
+          <div className="mt-8 pt-6 border-t border-gray-200 w-full text-center">
+            <p className="text-gray-600">
+              Don't have an account?{" "}
+              <a
+                href="/register"
+                className="text-blue-600 font-semibold hover:text-blue-700">
+                Sign up
+              </a>
+            </p>
           </div>
         </div>
       </div>
@@ -98,14 +115,15 @@ function LoginComponent() {
         autoClose={3000}
         hideProgressBar={false}
         newestOnTop={false}
-        closeOnClick={false}
+        closeOnClick
         rtl={false}
         pauseOnFocusLoss
         draggable
         pauseOnHover
         theme="light"
       />
-    </>
+    </div>
   );
 }
+
 export default LoginComponent;
