@@ -24,6 +24,12 @@ const init = async () => {
 onMounted(() => {
   init();
 });
+
+const isMobileMenuOpen = ref(false);
+
+const toggleMobileMenu = () => {
+  isMobileMenuOpen.value = !isMobileMenuOpen.value;
+};
 </script>
 
 <template>
@@ -72,7 +78,7 @@ onMounted(() => {
               <li>
                 <a
                   href="#"
-                  class="flex justify-start items-center hover:underline p-2 text-nowrap"
+                  class="flex items-center hover:underline px-2 pt-3 text-nowrap"
                 >
                   Explore all images
                   <span class="ms-1 mt-1">
@@ -103,152 +109,24 @@ onMounted(() => {
         </div>
       </li>
     </ul>
-    <!-- <li>
-        <span>Templates</span>
-        <div class="nav-header__dropdown">
-          <div class="nav-header__dropdown--left">
-            <ul>
-              <li class="nav-header__dropdown--item active">
-                Create
-                <span class="icon">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    class="bi bi-arrow-right"
-                    viewBox="0 0 16 16"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"
-                    />
-                  </svg>
-                </span>
-              </li>
-              <li class="nav-header__dropdown--item">
-                Edit
-                <span class="icon">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    class="bi bi-arrow-right"
-                    viewBox="0 0 16 16"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"
-                    />
-                  </svg>
-                </span>
-              </li>
-            </ul>
-            <a
-              href="#"
-              class="flex justify-center items-center hover:underline px-2 pt-3"
-              style="border-top: 1px solid #4e4e4e"
-            >
-              Explore AI Suite
-              <span class="ms-1 mt-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  class="bi bi-chevron-right"
-                  viewBox="0 0 16 16"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"
-                  />
-                </svg>
-              </span>
-            </a>
-          </div>
-          <div class="nav-header__dropdown--right">
-            <ul class="list-link">
-              <li>
-                <a href="#" class="nav-header__dropdown--item">
-                  <p class="flex flex-col w-[195px]">
-                    <span>AI Image Generator</span>
-                    <span class="text-[14px] text-[#9c9c9c] mt-2">
-                      Create images from words in real time
-                    </span>
-                  </p>
-                  <span class="icon">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      class="bi bi-arrow-right"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"
-                      />
-                    </svg>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a href="#" class="nav-header__dropdown--item">
-                  <p class="flex flex-col w-[195px]">
-                    <span>AI Image Generator</span>
-                    <span class="text-[14px] text-[#9c9c9c] mt-2"> Create images </span>
-                  </p>
-                  <span class="icon">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      class="bi bi-arrow-right"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"
-                      />
-                    </svg>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a href="#" class="nav-header__dropdown--item">
-                  <p class="flex flex-col w-[195px]">
-                    <span>AI Image Generator</span>
-                    <span class="text-[14px] text-[#9c9c9c] mt-2">
-                      Create images from words in real time
-                    </span>
-                  </p>
-                  <span class="icon">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      class="bi bi-arrow-right"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"
-                      />
-                    </svg>
-                  </span>
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </li> -->
     <div class="btn-actions ms-auto">
       <button class="btn">Sign in</button>
     </div>
+
+    <!-- Mobile menu button -->
+    <button class="md:hidden mobile-menu-button">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        fill="currentColor"
+        viewBox="0 0 16 16"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"
+        />
+      </svg>
+    </button>
   </header>
 </template>
