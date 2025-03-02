@@ -112,6 +112,29 @@
     background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.4))
 }
 
+/* Hàng 1 */
+#home .home-designers__product--item:nth-child(1),
+#home .home-designers__product--item:nth-child(2),
+#home .home-designers__product--item:nth-child(7),
+#home .home-designers__product--item:nth-child(8) {
+  grid-column: span 2;
+}
+
+#home .home-designers__product--item:nth-child(3),
+#home .home-designers__product--item:nth-child(9) {
+  grid-column: span 3;
+}
+
+/* Hàng 2 */
+#home .home-designers__product--item:nth-child(4) {
+  grid-column: span 3;
+}
+
+#home .home-designers__product--item:nth-child(5),
+#home .home-designers__product--item:nth-child(6) {
+  grid-column: span 2;
+}
+
 #home .home-inspired__item img ~ div {
     opacity: 0;
     background: rgba(0, 0, 0, 0);
