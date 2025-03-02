@@ -1,4 +1,30 @@
-<script setup></script>
+<script setup>
+import { onMounted, ref } from "vue";
+import axios from "axios";
+
+const url = "http://localhost:3000";
+
+const categories = ref([]);
+
+// get data categories
+const getDataNav = async () => {
+  try {
+    const res = await axios.get(`${url}/category/data-navbar`);
+    if (res.data?.statusCode !== 200) console.error(res.data);
+    return res.data?.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const init = async () => {
+  categories.value = await getDataNav();
+};
+
+onMounted(() => {
+  init();
+});
+</script>
 
 <template>
   <header id="header" class="flex items-center">
@@ -38,215 +64,9 @@
       </svg>
     </a>
     <ul class="nav-header flex items-center ms-10 font-bold">
-      <li>
-        <span>Tools</span>
-        <div class="nav-header__dropdown">
-          <div class="nav-header__dropdown--left">
-            <ul>
-              <li class="nav-header__dropdown--item active">
-                Create
-                <span class="icon">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    class="bi bi-arrow-right"
-                    viewBox="0 0 16 16"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"
-                    />
-                  </svg>
-                </span>
-              </li>
-              <li class="nav-header__dropdown--item">
-                Edit
-                <span class="icon">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    class="bi bi-arrow-right"
-                    viewBox="0 0 16 16"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"
-                    />
-                  </svg>
-                </span>
-              </li>
-            </ul>
-            <a
-              href="#"
-              class="flex justify-center items-center hover:underline px-2 pt-3"
-              style="border-top: 1px solid #4e4e4e"
-            >
-              Explore AI Suite
-              <span class="ms-1 mt-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  class="bi bi-chevron-right"
-                  viewBox="0 0 16 16"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"
-                  />
-                </svg>
-              </span>
-            </a>
-          </div>
-          <div class="nav-header__dropdown--right">
-            <ul class="list-link">
-              <li>
-                <a href="#" class="nav-header__dropdown--item">
-                  <p class="flex flex-col w-[195px]">
-                    <span>AI Image Generator</span>
-                    <span class="text-[14px] text-[#9c9c9c] mt-2">
-                      Create images from words in real time
-                    </span>
-                  </p>
-                  <span class="icon">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      class="bi bi-arrow-right"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"
-                      />
-                    </svg>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a href="#" class="nav-header__dropdown--item">
-                  <p class="flex flex-col w-[195px]">
-                    <span>AI Image Generator</span>
-                    <span class="text-[14px] text-[#9c9c9c] mt-2"> Create images </span>
-                  </p>
-                  <span class="icon">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      class="bi bi-arrow-right"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"
-                      />
-                    </svg>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a href="#" class="nav-header__dropdown--item">
-                  <p class="flex flex-col w-[195px]">
-                    <span>AI Image Generator</span>
-                    <span class="text-[14px] text-[#9c9c9c] mt-2">
-                      Create images from words in real time
-                    </span>
-                  </p>
-                  <span class="icon">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      class="bi bi-arrow-right"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"
-                      />
-                    </svg>
-                  </span>
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </li>
-      <li>
-        <span>Images</span>
-        <div class="nav-header__dropdown">
-          <div class="nav-header__dropdown--left">
-            <ul>
-              <li class="nav-header__dropdown--item active">
-                Vectors
-                <span class="icon">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    class="bi bi-arrow-right"
-                    viewBox="0 0 16 16"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"
-                    />
-                  </svg>
-                </span>
-              </li>
-              <li class="nav-header__dropdown--item">
-                Photos
-                <span class="icon">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    class="bi bi-arrow-right"
-                    viewBox="0 0 16 16"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"
-                    />
-                  </svg>
-                </span>
-              </li>
-            </ul>
-            <a
-              href="#"
-              class="flex justify-center items-center hover:underline px-2 pt-3 text-nowrap"
-              style="border-top: 1px solid #4e4e4e"
-            >
-              Explore all images
-              <span class="ms-1 mt-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  class="bi bi-chevron-right"
-                  viewBox="0 0 16 16"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"
-                  />
-                </svg>
-              </span>
-            </a>
-          </div>
+      <li v-for="category in categories" :key="category.id">
+        <span>{{ category.name }}</span>
+        <div v-if="category.subCategories?.length > 0" class="nav-header__dropdown">
           <div class="nav-header__dropdown--right">
             <ul class="list-link">
               <li>
@@ -273,31 +93,17 @@
                 </a>
               </li>
               <li></li>
-              <li>
-                <a href="#" class="nav-header__dropdown--item-v2"> Illustrations </a>
-              </li>
-              <li>
-                <a href="#" class="nav-header__dropdown--item-v2"> Textures </a>
-              </li>
-              <li>
-                <a href="#" class="nav-header__dropdown--item-v2"> Cartoons </a>
-              </li>
-              <li>
-                <a href="#" class="nav-header__dropdown--item-v2"> Illustrations </a>
-              </li>
-              <li>
-                <a href="#" class="nav-header__dropdown--item-v2"> Textures </a>
-              </li>
-              <li>
-                <a href="#" class="nav-header__dropdown--item-v2"> Cartoons </a>
+              <li v-for="sub in category.subCategories" :key="sub.id">
+                <a :href="sub.name" class="nav-header__dropdown--item-v2">{{
+                  sub.name
+                }}</a>
               </li>
             </ul>
           </div>
         </div>
       </li>
-      <li><span>Icons</span></li>
-      <li><span>Videos</span></li>
-      <li>
+    </ul>
+    <!-- <li>
         <span>Templates</span>
         <div class="nav-header__dropdown">
           <div class="nav-header__dropdown--left">
@@ -440,8 +246,7 @@
             </ul>
           </div>
         </div>
-      </li>
-    </ul>
+      </li> -->
     <div class="btn-actions ms-auto">
       <button class="btn">Sign in</button>
     </div>
