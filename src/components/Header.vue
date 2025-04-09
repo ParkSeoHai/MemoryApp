@@ -3,6 +3,7 @@ import { onMounted, ref } from "vue";
 import axios from "axios";
 
 const url = "http://localhost:3000";
+const user = ref();
 
 const categories = ref([]);
 
@@ -19,6 +20,8 @@ const getDataNav = async () => {
 
 const init = async () => {
   categories.value = await getDataNav();
+  user.value = JSON.parse(localStorage.getItem("user"));
+  console.log(user.value);
 };
 
 onMounted(() => {
@@ -109,9 +112,28 @@ const toggleMobileMenu = () => {
         </div>
       </li>
     </ul>
-    <div class="btn-actions ms-auto">
+    <div v-if="!user" class="btn-actions ms-auto">
       <button class="btn">Sign in</button>
     </div>
+    <template v-else>
+      <div class="flex items-center gap-2 ms-auto cursor-pointer">
+        <img :src="user?.avatar" class="w-[24px] h-[24px] rounded-full" />
+        <span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 512 512"
+            width="16"
+            height="16"
+            fill="#fff"
+            aria-hidden="true"
+          >
+            <path
+              d="m256 275.6-92.3-92.3c-9.8-9.8-25.6-9.8-35.4 0s-9.8 25.6 0 35.4l110 110c4.9 4.9 11.3 7.3 17.7 7.3s12.8-2.4 17.7-7.3l110-110c9.8-9.8 9.8-25.6 0-35.4s-25.6-9.8-35.4 0z"
+            ></path>
+          </svg>
+        </span>
+      </div>
+    </template>
 
     <!-- Mobile menu button -->
     <button class="md:hidden mobile-menu-button">

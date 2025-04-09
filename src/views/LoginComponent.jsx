@@ -17,15 +17,20 @@ function LoginComponent() {
 
       const formatResult = result.user.providerData[0];
       const response = await ApiLogin(formatResult);
-
       if (response?.status === 404) {
         toast.error(
           "Đăng nhập không thành công, tài khoản không tồn tại trong hệ thống"
         );
+        return;
       } else if (response?.status === 200) {
         toast.success("Đăng nhập tài khoản thành công");
       }
       // Bạn có thể xử lý thêm phản hồi từ API ở đây nếu cần
+      localStorage.setItem("token", response?.data?.token);
+      localStorage.setItem("user", JSON.stringify(response?.data?.user));
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 1000);
     } catch (error) {
       toast.error("Đã xảy ra lỗi từ phía máy chủ, vui lòng thử lại sau.");
     }
@@ -48,6 +53,11 @@ function LoginComponent() {
         toast.success("Đăng nhập tài khoản thành công");
       }
       // Bạn có thể xử lý thêm phản hồi từ API ở đây nếu cần
+      localStorage.setItem("token", response?.data?.token);
+      localStorage.setItem("user", JSON.stringify(response?.data?.user));
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 1000);
     } catch (error) {
       toast.error(
         "Email của tài khoản này, đã được sử dụng cho một phương thức đăng nhập khắc, vui lòng thử lại sau"

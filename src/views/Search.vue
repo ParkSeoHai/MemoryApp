@@ -118,10 +118,24 @@ const init = async () => {
   const resources = await getResourceTags();
   // tách thành 4 mảng result
   results.value = splitIntoFourEqualParts(resources || []);
+  // show detail
+  if (query.value?.detail_id) {
+    const dataDetail = resources.find(
+      (item) => item.id === Number(query.value.detail_id)
+    );
+    if (dataDetail) {
+      handleShowDetail(dataDetail);
+    }
+    console.log(dataDetail);
+  }
+  console.log(query.value);
 };
 
 const handleCloseModal = () => {
   showDetail.value = false;
+  const url = new URL(window.location.href); // Lấy URL hiện tại
+  url.searchParams.delete("detail_id");
+  window.location.href = url;
 };
 
 const handleDownload = () => {

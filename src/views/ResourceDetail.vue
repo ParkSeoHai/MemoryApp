@@ -99,6 +99,7 @@ async function downloadFileAsFormat(cloudinaryUrl, format) {
     newUrl = `${baseUrl}/${publicId}.${format}`;
     filename = `${publicId}.${format}`;
   }
+
   const response = await fetch(newUrl);
   const blob = await response.blob();
   const blobUrl = URL.createObjectURL(blob);
@@ -181,7 +182,7 @@ onMounted(async () => {
             </div>
             <div class="ms-auto">
               <div class="flex items-center btn-download text-[#fff]">
-                <button class="btn bg-[#336aea]" @click="handleDownload">
+                <button class="btn bg-[#336aea]" @click="handleDownload(null)">
                   <span class="me-1">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
