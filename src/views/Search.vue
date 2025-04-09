@@ -1,72 +1,147 @@
 <script setup>
-import { ref, onMounted, nextTick } from "vue";
-
-const slides = ref([
-  {
-    title: "AI Image Generator",
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-49 141 512 512" width="16" height="16" aria-hidden="true">
-      <path d="M388 191H26c-35.841 0-65 29.159-65 65v281.995q0 .623.031 1.246C-38.302 574.509-9.425 603 26 603h362c35.841 0 65-29.159 65-65V256c0-35.841-29.159-65-65-65M26 241h362c8.271 0 15 6.729 15 15v282a14.9 14.9 0 0 1-1.386 6.258l-75.936-75.936c-9.764-9.763-25.592-9.763-35.355 0L257 501.645 139.678 384.322c-9.764-9.763-25.592-9.763-35.355 0L11 477.645V256c0-8.271 6.729-15 15-15"></path><path d="M293 401c27.57 0 50-22.43 50-50s-22.43-50-50-50-50 22.43-50 50 22.43 50 50 50">
-      </path></svg>`,
-  },
-  {
-    title: "AI Image",
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-49 141 512 512" width="16" height="16" aria-hidden="true">
-      <path d="M388 191H26c-35.841 0-65 29.159-65 65v281.995q0 .623.031 1.246C-38.302 574.509-9.425 603 26 603h362c35.841 0 65-29.159 65-65V256c0-35.841-29.159-65-65-65M26 241h362c8.271 0 15 6.729 15 15v282a14.9 14.9 0 0 1-1.386 6.258l-75.936-75.936c-9.764-9.763-25.592-9.763-35.355 0L257 501.645 139.678 384.322c-9.764-9.763-25.592-9.763-35.355 0L11 477.645V256c0-8.271 6.729-15 15-15"></path><path d="M293 401c27.57 0 50-22.43 50-50s-22.43-50-50-50-50 22.43-50 50 22.43 50 50 50">
-      </path></svg>`,
-  },
-  {
-    title: "Image Generator",
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-49 141 512 512" width="16" height="16" aria-hidden="true">
-      <path d="M388 191H26c-35.841 0-65 29.159-65 65v281.995q0 .623.031 1.246C-38.302 574.509-9.425 603 26 603h362c35.841 0 65-29.159 65-65V256c0-35.841-29.159-65-65-65M26 241h362c8.271 0 15 6.729 15 15v282a14.9 14.9 0 0 1-1.386 6.258l-75.936-75.936c-9.764-9.763-25.592-9.763-35.355 0L257 501.645 139.678 384.322c-9.764-9.763-25.592-9.763-35.355 0L11 477.645V256c0-8.271 6.729-15 15-15"></path><path d="M293 401c27.57 0 50-22.43 50-50s-22.43-50-50-50-50 22.43-50 50 22.43 50 50 50">
-      </path></svg>`,
-  },
-  {
-    title: "AI Image Generator",
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-49 141 512 512" width="16" height="16" aria-hidden="true">
-      <path d="M388 191H26c-35.841 0-65 29.159-65 65v281.995q0 .623.031 1.246C-38.302 574.509-9.425 603 26 603h362c35.841 0 65-29.159 65-65V256c0-35.841-29.159-65-65-65M26 241h362c8.271 0 15 6.729 15 15v282a14.9 14.9 0 0 1-1.386 6.258l-75.936-75.936c-9.764-9.763-25.592-9.763-35.355 0L257 501.645 139.678 384.322c-9.764-9.763-25.592-9.763-35.355 0L11 477.645V256c0-8.271 6.729-15 15-15"></path><path d="M293 401c27.57 0 50-22.43 50-50s-22.43-50-50-50-50 22.43-50 50 22.43 50 50 50">
-      </path></svg>`,
-  },
-  {
-    title: "AI Image Generator",
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-49 141 512 512" width="16" height="16" aria-hidden="true">
-      <path d="M388 191H26c-35.841 0-65 29.159-65 65v281.995q0 .623.031 1.246C-38.302 574.509-9.425 603 26 603h362c35.841 0 65-29.159 65-65V256c0-35.841-29.159-65-65-65M26 241h362c8.271 0 15 6.729 15 15v282a14.9 14.9 0 0 1-1.386 6.258l-75.936-75.936c-9.764-9.763-25.592-9.763-35.355 0L257 501.645 139.678 384.322c-9.764-9.763-25.592-9.763-35.355 0L11 477.645V256c0-8.271 6.729-15 15-15"></path><path d="M293 401c27.57 0 50-22.43 50-50s-22.43-50-50-50-50 22.43-50 50 22.43 50 50 50">
-      </path></svg>`,
-  },
-  {
-    title: "AI Image Generator",
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-49 141 512 512" width="16" height="16" aria-hidden="true">
-      <path d="M388 191H26c-35.841 0-65 29.159-65 65v281.995q0 .623.031 1.246C-38.302 574.509-9.425 603 26 603h362c35.841 0 65-29.159 65-65V256c0-35.841-29.159-65-65-65M26 241h362c8.271 0 15 6.729 15 15v282a14.9 14.9 0 0 1-1.386 6.258l-75.936-75.936c-9.764-9.763-25.592-9.763-35.355 0L257 501.645 139.678 384.322c-9.764-9.763-25.592-9.763-35.355 0L11 477.645V256c0-8.271 6.729-15 15-15"></path><path d="M293 401c27.57 0 50-22.43 50-50s-22.43-50-50-50-50 22.43-50 50 22.43 50 50 50">
-      </path></svg>`,
-  },
-  {
-    title: "AI Image Generator",
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-49 141 512 512" width="16" height="16" aria-hidden="true">
-      <path d="M388 191H26c-35.841 0-65 29.159-65 65v281.995q0 .623.031 1.246C-38.302 574.509-9.425 603 26 603h362c35.841 0 65-29.159 65-65V256c0-35.841-29.159-65-65-65M26 241h362c8.271 0 15 6.729 15 15v282a14.9 14.9 0 0 1-1.386 6.258l-75.936-75.936c-9.764-9.763-25.592-9.763-35.355 0L257 501.645 139.678 384.322c-9.764-9.763-25.592-9.763-35.355 0L11 477.645V256c0-8.271 6.729-15 15-15"></path><path d="M293 401c27.57 0 50-22.43 50-50s-22.43-50-50-50-50 22.43-50 50 22.43 50 50 50">
-      </path></svg>`,
-  },
-  {
-    title: "AI Image Generator",
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-49 141 512 512" width="16" height="16" aria-hidden="true">
-      <path d="M388 191H26c-35.841 0-65 29.159-65 65v281.995q0 .623.031 1.246C-38.302 574.509-9.425 603 26 603h362c35.841 0 65-29.159 65-65V256c0-35.841-29.159-65-65-65M26 241h362c8.271 0 15 6.729 15 15v282a14.9 14.9 0 0 1-1.386 6.258l-75.936-75.936c-9.764-9.763-25.592-9.763-35.355 0L257 501.645 139.678 384.322c-9.764-9.763-25.592-9.763-35.355 0L11 477.645V256c0-8.271 6.729-15 15-15"></path><path d="M293 401c27.57 0 50-22.43 50-50s-22.43-50-50-50-50 22.43-50 50 22.43 50 50 50">
-      </path></svg>`,
-  },
-  {
-    title: "AI Image",
-    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-49 141 512 512" width="16" height="16" aria-hidden="true">
-      <path d="M388 191H26c-35.841 0-65 29.159-65 65v281.995q0 .623.031 1.246C-38.302 574.509-9.425 603 26 603h362c35.841 0 65-29.159 65-65V256c0-35.841-29.159-65-65-65M26 241h362c8.271 0 15 6.729 15 15v282a14.9 14.9 0 0 1-1.386 6.258l-75.936-75.936c-9.764-9.763-25.592-9.763-35.355 0L257 501.645 139.678 384.322c-9.764-9.763-25.592-9.763-35.355 0L11 477.645V256c0-8.271 6.729-15 15-15"></path><path d="M293 401c27.57 0 50-22.43 50-50s-22.43-50-50-50-50 22.43-50 50 22.43 50 50 50">
-      </path></svg>`,
-  },
-]);
-
+import { ref, onMounted, nextTick, watch } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
+import axios from "axios";
+import ResourceDetail from "./ResourceDetail.vue";
+
+const query = ref();
+const url = "http://localhost:3000";
+
+const categories = ref([]);
+const slides = ref([]);
+const results = ref([]);
+const resultCol = ref(4);
+const pagination = ref();
+const page = ref(1);
+const categoryId = ref(null);
+
+const showDetail = ref(false);
+const dataDetail = ref({});
+
+// watch(page, async () => {
+//   if (page.value) {
+// const url = new URL(window.location.href); // Lấy URL hiện tại
+// url.searchParams.set("page", page.value);
+// window.location.href = url;
+//     // const resources = await getResourceTags();
+//     // // tách thành 4 mảng result
+//     // results.value = splitIntoFourEqualParts(resources || []);
+//   }
+// });
+
+const playVideo = (event) => {
+  event?.target?.play();
+};
+
+const stopVideo = (event) => {
+  event?.target?.pause();
+};
+
+function getQueryParamsFromCurrentUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const result = {};
+  params.forEach((value, key) => {
+    result[key] = value;
+  });
+  return result;
+}
+
+function splitIntoFourEqualParts(arr) {
+  const chunkSize = Math.ceil(arr.length / resultCol.value);
+  const result = [
+    arr.slice(0, chunkSize),
+    arr.slice(chunkSize, chunkSize * 2),
+    arr.slice(chunkSize * 2, chunkSize * 3),
+    arr.slice(chunkSize * 3),
+  ];
+  return result;
+}
+
+function handleClickType(category) {
+  const { id, name } = category;
+  const url = new URL(window.location.href); // Lấy URL hiện tại
+  url.searchParams.set("categoryId", id);
+  url.searchParams.set("name", name);
+  url.searchParams.set("page", 1);
+  window.location.href = url;
+}
+
+const getRelatedTags = async () => {
+  try {
+    const res = await axios.get(`${url}/tag/related/${query.value.query}/10`);
+    if (res.data?.statusCode !== 200) console.error(res.data);
+    return res.data?.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getResourceTags = async () => {
+  try {
+    const res = await axios.get(
+      `${url}/tag/resources/${query.value.query}?page=${page.value}&limit=15&categoryId=${categoryId.value}`
+    );
+    if (res.data?.statusCode !== 200) console.error(res.data);
+    pagination.value = res.data?.pagination;
+    return res.data?.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// get data categories
+const getDataNav = async () => {
+  try {
+    const res = await axios.get(`${url}/category/data-navbar`);
+    if (res.data?.statusCode !== 200) console.error(res.data);
+    return res.data?.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const handlePage = (value) => {
+  const url = new URL(window.location.href); // Lấy URL hiện tại
+  url.searchParams.set("page", page.value + value);
+  window.location.href = url;
+};
+
+const init = async () => {
+  query.value = getQueryParamsFromCurrentUrl();
+  slides.value = await getRelatedTags();
+  categories.value = await getDataNav();
+  page.value = Number(query.value.page) || 1;
+  categoryId.value = Number(query.value?.categoryId) || null;
+  const resources = await getResourceTags();
+  // tách thành 4 mảng result
+  results.value = splitIntoFourEqualParts(resources || []);
+};
+
+const handleCloseModal = () => {
+  showDetail.value = false;
+};
+
+const handleDownload = () => {
+  alert("DOWNLOAD");
+};
+
+const handleShowDetail = (item) => {
+  showDetail.value = true;
+  dataDetail.value.item = item;
+  dataDetail.value.slides = slides.value;
+};
+
+onMounted(() => {
+  init();
+});
 </script>
 
 <template>
   <div id="search">
-    <div class="container relative">
+    <div class="relative container">
       <div
         class="sticky top-0 z-50 flex items-center text-black rounded bg-[#f7f7f7] h-[56px] px-2"
         style="border: 1px solid #d8d8d8"
@@ -192,14 +267,65 @@ import "swiper/css/navigation";
                 navigation
                 class="right--swiper"
               >
+                <!-- <swiper-slide class="right--swiper-slide">
+                  <button
+                    @click.prevent="handleClickType()"
+                    class="block w-full px-6 py-3 rounded-lg border border-gray-300"
+                  >
+                    <div class="flex items-center justify-center gap-2 font-semibold">
+                      <span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="-49 141 512 512"
+                          width="16"
+                          height="16"
+                          aria-hidden="true"
+                          class="$w-[1em] $h-[1em] $fill-current $text-sm $mr-10"
+                        >
+                          <path
+                            d="M388 191H26c-35.841 0-65 29.159-65 65v281.995q0 .623.031 1.246C-38.302 574.509-9.425 603 26 603h362c35.841 0 65-29.159 65-65V256c0-35.841-29.159-65-65-65M26 241h362c8.271 0 15 6.729 15 15v282a14.9 14.9 0 0 1-1.386 6.258l-75.936-75.936c-9.764-9.763-25.592-9.763-35.355 0L257 501.645 139.678 384.322c-9.764-9.763-25.592-9.763-35.355 0L11 477.645V256c0-8.271 6.729-15 15-15"
+                          ></path>
+                          <path
+                            d="M293 401c27.57 0 50-22.43 50-50s-22.43-50-50-50-50 22.43-50 50 22.43 50 50 50"
+                          ></path>
+                        </svg>
+                      </span>
+                      <p class="text-[14px] whitespace-nowrap">Photos</p>
+                    </div>
+                  </button>
+                </swiper-slide>
+                <swiper-slide class="right--swiper-slide">
+                  <a href="#" class="block px-6 py-3 rounded-lg border border-gray-300">
+                    <div class="flex items-center justify-center gap-2 font-semibold">
+                      <span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="-49 141 512 512"
+                          width="16"
+                          height="16"
+                          aria-hidden="true"
+                          class="$w-[1em] $h-[1em] $fill-current $text-sm $mr-10"
+                        >
+                          <path
+                            d="M393.77 166h-61.54c-24.388 0-44.23 19.842-44.23 44.23v4.27h-37.5c-13.808 0-25 11.192-25 25s11.192 25 25 25H288v7.27c0 24.389 19.842 44.23 44.23 44.23H338v36c0 13.808 11.192 25 25 25s25-11.192 25-25v-36h5.77c24.389 0 44.23-19.842 44.23-44.23v-61.54c0-24.388-19.842-44.23-44.23-44.23M388 266h-50v-50h50zm5.77 212H388v-36c0-13.808-11.192-25-25-25s-25 11.192-25 25v36h-5.77c-24.389 0-44.23 19.842-44.23 44.23v7.27h-37.5c-13.808 0-25 11.192-25 25s11.192 25 25 25H288v4.27c0 24.389 19.842 44.23 44.23 44.23h61.539c24.389 0 44.23-19.842 44.23-44.23v-61.54C438 497.842 418.158 478 393.77 478M388 578h-50v-50h50zM160.5 214.5H126v-4.27c0-24.388-19.842-44.23-44.23-44.23H20.23C-4.158 166-24 185.842-24 210.23v61.539C-24 296.158-4.158 316 20.23 316H23v36c0 13.808 11.192 25 25 25s25-11.192 25-25v-36h8.77c24.389 0 44.23-19.842 44.23-44.23v-7.27h34.5c13.808 0 25-11.192 25-25s-11.192-25-25-25M76 266H26v-50h50zm84.5 263.5H126v-7.27c0-24.389-19.842-44.23-44.23-44.23H73v-36c0-13.808-11.192-25-25-25s-25 11.192-25 25v36h-2.77C-4.158 478-24 497.842-24 522.23v61.539C-24 608.158-4.158 628 20.23 628h61.539c24.389 0 44.23-19.842 44.23-44.23v-4.27h34.5c13.808 0 25-11.192 25-25s-11.191-25-24.999-25M76 578H26v-50h50z"
+                          ></path>
+                        </svg>
+                      </span>
+                      <p class="text-[14px] whitespace-nowrap">Vectors</p>
+                    </div>
+                  </a>
+                </swiper-slide> -->
                 <swiper-slide
                   v-for="(slide, index) in slides"
                   :key="index"
                   class="right--swiper-slide"
                 >
-                  <a href="#" class="block px-6 py-3 rounded-lg border border-gray-300">
+                  <a
+                    :href="`/search?query=${slide.title}`"
+                    class="block px-6 py-3 rounded-lg border border-gray-300"
+                  >
                     <div class="flex items-center justify-center gap-2 font-semibold">
-                      <span v-html="slide.icon"></span>
+                      <span v-html="slide?.icon"></span>
                       <p class="text-[14px] whitespace-nowrap">{{ slide.title }}</p>
                     </div>
                   </a>
@@ -245,18 +371,26 @@ import "swiper/css/navigation";
               </button>
               <div class="filter-detail__more">
                 <ul class="flex flex-wrap gap-3 pt-2 pb-6 font-normal">
-                  <li><a href="#" class="btn" style="font-weight: 400">Vectors</a></li>
-                  <li>
-                    <a href="#" class="btn" style="font-weight: 400">Vectors Vectors</a>
+                  <li
+                    v-for="category in categories"
+                    :key="category?.id"
+                    :class="{ active: category?.id == categoryId }"
+                  >
+                    <button
+                      @click.prevent="handleClickType(category)"
+                      class="btn"
+                      style="font-weight: 400"
+                    >
+                      {{ category.name }}
+                    </button>
                   </li>
-                  <li><a href="#" class="btn" style="font-weight: 400">Vectors</a></li>
                 </ul>
               </div>
             </div>
             <div class="pe-5">
               <button
                 type="button"
-                class="flex items-center gap-2 cursor-pointer py-4 font-semibold w-full"
+                class="active filter-detail__btn flex items-center gap-2 cursor-pointer py-4 font-semibold w-full"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -266,10 +400,10 @@ import "swiper/css/navigation";
                   aria-hidden="true"
                 >
                   <path
-                    d="M437.838 214.25h-200c-13.807 0-25 11.193-25 25v59.933L142.151 176.75a25 25 0 0 0-43.3 0l-144.339 250a25 25 0 0 0 21.651 37.5h121.15a135 135 0 0 0-3.475 30.5c0 74.439 60.561 135 135 135s135-60.561 135-135c0-10.486-1.202-20.696-3.475-30.5h77.475c13.807 0 25-11.193 25-25v-200c0-13.807-11.193-25-25-25m-418.374 200 101.037-175 72.383 125.369c-29.306 8.107-54.642 25.865-72.352 49.631zm209.374 165.5c-46.869 0-85-38.131-85-85s38.131-85 85-85 85 38.131 85 85-38.131 85-85 85m184-165.5h-75.693c-18.103-24.293-44.173-42.314-74.307-50.161V264.25h150z"
+                    d="M428 216a24.9 24.9 0 0 0-16.773 6.462l-93.73 84.821-93.729-84.82c-9.523-8.617-24.026-8.618-33.55.001l-93.723 84.818s-94.847-85.773-94.957-85.86A24.9 24.9 0 0 0-14 216c-13.808 0-25 11.193-25 25v272c0 35.841 29.159 65 65 65h362c35.841 0 65-29.159 65-65V241c0-13.807-11.192-25-25-25m-40 312H26c-8.271 0-15-6.729-15-15V297.344l68.72 62.192c9.521 8.617 24.027 8.618 33.551 0l93.723-84.819 93.729 84.82c4.761 4.309 10.768 6.463 16.774 6.463s12.014-2.154 16.774-6.464L403 297.34V513c0 8.272-6.729 15-15 15"
                   ></path>
                 </svg>
-                <span>Asset type</span>
+                <span>License</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 512 512"
@@ -283,164 +417,14 @@ import "swiper/css/navigation";
                   ></path>
                 </svg>
               </button>
-            </div>
-            <div class="pe-5">
-              <button
-                type="button"
-                class="flex items-center gap-2 cursor-pointer py-4 font-semibold w-full"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="-49 141 512 512"
-                  width="16"
-                  height="16"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M437.838 214.25h-200c-13.807 0-25 11.193-25 25v59.933L142.151 176.75a25 25 0 0 0-43.3 0l-144.339 250a25 25 0 0 0 21.651 37.5h121.15a135 135 0 0 0-3.475 30.5c0 74.439 60.561 135 135 135s135-60.561 135-135c0-10.486-1.202-20.696-3.475-30.5h77.475c13.807 0 25-11.193 25-25v-200c0-13.807-11.193-25-25-25m-418.374 200 101.037-175 72.383 125.369c-29.306 8.107-54.642 25.865-72.352 49.631zm209.374 165.5c-46.869 0-85-38.131-85-85s38.131-85 85-85 85 38.131 85 85-38.131 85-85 85m184-165.5h-75.693c-18.103-24.293-44.173-42.314-74.307-50.161V264.25h150z"
-                  ></path>
-                </svg>
-                <span>Asset type</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 512 512"
-                  width="16"
-                  height="16"
-                  aria-hidden="true"
-                  class="ms-auto"
-                >
-                  <path
-                    d="m256 275.6-92.3-92.3c-9.8-9.8-25.6-9.8-35.4 0s-9.8 25.6 0 35.4l110 110c4.9 4.9 11.3 7.3 17.7 7.3s12.8-2.4 17.7-7.3l110-110c9.8-9.8 9.8-25.6 0-35.4s-25.6-9.8-35.4 0z"
-                  ></path>
-                </svg>
-              </button>
-              <div>
+              <div class="filter-detail__more">
                 <ul class="flex flex-wrap gap-3 pt-2 pb-6 font-normal">
-                  <li><a href="#" class="btn" style="font-weight: 400">Vectors</a></li>
                   <li>
-                    <a href="#" class="btn" style="font-weight: 400">Vectors Vectors</a>
+                    <a href="#" class="btn" style="font-weight: 400">Free</a>
                   </li>
-                  <li><a href="#" class="btn" style="font-weight: 400">Vectors</a></li>
-                </ul>
-              </div>
-            </div>
-            <div class="pe-5">
-              <button
-                type="button"
-                class="flex items-center gap-2 cursor-pointer py-4 font-semibold w-full"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="-49 141 512 512"
-                  width="16"
-                  height="16"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M437.838 214.25h-200c-13.807 0-25 11.193-25 25v59.933L142.151 176.75a25 25 0 0 0-43.3 0l-144.339 250a25 25 0 0 0 21.651 37.5h121.15a135 135 0 0 0-3.475 30.5c0 74.439 60.561 135 135 135s135-60.561 135-135c0-10.486-1.202-20.696-3.475-30.5h77.475c13.807 0 25-11.193 25-25v-200c0-13.807-11.193-25-25-25m-418.374 200 101.037-175 72.383 125.369c-29.306 8.107-54.642 25.865-72.352 49.631zm209.374 165.5c-46.869 0-85-38.131-85-85s38.131-85 85-85 85 38.131 85 85-38.131 85-85 85m184-165.5h-75.693c-18.103-24.293-44.173-42.314-74.307-50.161V264.25h150z"
-                  ></path>
-                </svg>
-                <span>Asset type</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 512 512"
-                  width="16"
-                  height="16"
-                  aria-hidden="true"
-                  class="ms-auto"
-                >
-                  <path
-                    d="m256 275.6-92.3-92.3c-9.8-9.8-25.6-9.8-35.4 0s-9.8 25.6 0 35.4l110 110c4.9 4.9 11.3 7.3 17.7 7.3s12.8-2.4 17.7-7.3l110-110c9.8-9.8 9.8-25.6 0-35.4s-25.6-9.8-35.4 0z"
-                  ></path>
-                </svg>
-              </button>
-              <div>
-                <ul class="flex flex-wrap gap-3 pt-2 pb-6 font-normal">
-                  <li><a href="#" class="btn" style="font-weight: 400">Vectors</a></li>
                   <li>
-                    <a href="#" class="btn" style="font-weight: 400">Vectors Vectors</a>
+                    <a href="#" class="btn" style="font-weight: 400">Premium</a>
                   </li>
-                  <li><a href="#" class="btn" style="font-weight: 400">Vectors</a></li>
-                </ul>
-              </div>
-            </div>
-            <div class="pe-5">
-              <button
-                type="button"
-                class="flex items-center gap-2 cursor-pointer py-4 font-semibold w-full"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="-49 141 512 512"
-                  width="16"
-                  height="16"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M437.838 214.25h-200c-13.807 0-25 11.193-25 25v59.933L142.151 176.75a25 25 0 0 0-43.3 0l-144.339 250a25 25 0 0 0 21.651 37.5h121.15a135 135 0 0 0-3.475 30.5c0 74.439 60.561 135 135 135s135-60.561 135-135c0-10.486-1.202-20.696-3.475-30.5h77.475c13.807 0 25-11.193 25-25v-200c0-13.807-11.193-25-25-25m-418.374 200 101.037-175 72.383 125.369c-29.306 8.107-54.642 25.865-72.352 49.631zm209.374 165.5c-46.869 0-85-38.131-85-85s38.131-85 85-85 85 38.131 85 85-38.131 85-85 85m184-165.5h-75.693c-18.103-24.293-44.173-42.314-74.307-50.161V264.25h150z"
-                  ></path>
-                </svg>
-                <span>Asset type</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 512 512"
-                  width="16"
-                  height="16"
-                  aria-hidden="true"
-                  class="ms-auto"
-                >
-                  <path
-                    d="m256 275.6-92.3-92.3c-9.8-9.8-25.6-9.8-35.4 0s-9.8 25.6 0 35.4l110 110c4.9 4.9 11.3 7.3 17.7 7.3s12.8-2.4 17.7-7.3l110-110c9.8-9.8 9.8-25.6 0-35.4s-25.6-9.8-35.4 0z"
-                  ></path>
-                </svg>
-              </button>
-              <div>
-                <ul class="flex flex-wrap gap-3 pt-2 pb-6 font-normal">
-                  <li><a href="#" class="btn" style="font-weight: 400">Vectors</a></li>
-                  <li>
-                    <a href="#" class="btn" style="font-weight: 400">Vectors Vectors</a>
-                  </li>
-                  <li><a href="#" class="btn" style="font-weight: 400">Vectors</a></li>
-                </ul>
-              </div>
-            </div>
-            <div class="pe-5">
-              <button
-                type="button"
-                class="flex items-center gap-2 cursor-pointer py-4 font-semibold w-full"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="-49 141 512 512"
-                  width="16"
-                  height="16"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M437.838 214.25h-200c-13.807 0-25 11.193-25 25v59.933L142.151 176.75a25 25 0 0 0-43.3 0l-144.339 250a25 25 0 0 0 21.651 37.5h121.15a135 135 0 0 0-3.475 30.5c0 74.439 60.561 135 135 135s135-60.561 135-135c0-10.486-1.202-20.696-3.475-30.5h77.475c13.807 0 25-11.193 25-25v-200c0-13.807-11.193-25-25-25m-418.374 200 101.037-175 72.383 125.369c-29.306 8.107-54.642 25.865-72.352 49.631zm209.374 165.5c-46.869 0-85-38.131-85-85s38.131-85 85-85 85 38.131 85 85-38.131 85-85 85m184-165.5h-75.693c-18.103-24.293-44.173-42.314-74.307-50.161V264.25h150z"
-                  ></path>
-                </svg>
-                <span>Asset type</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 512 512"
-                  width="16"
-                  height="16"
-                  aria-hidden="true"
-                  class="ms-auto"
-                >
-                  <path
-                    d="m256 275.6-92.3-92.3c-9.8-9.8-25.6-9.8-35.4 0s-9.8 25.6 0 35.4l110 110c4.9 4.9 11.3 7.3 17.7 7.3s12.8-2.4 17.7-7.3l110-110c9.8-9.8 9.8-25.6 0-35.4s-25.6-9.8-35.4 0z"
-                  ></path>
-                </svg>
-              </button>
-              <div>
-                <ul class="flex flex-wrap gap-3 pt-2 pb-6 font-normal">
-                  <li><a href="#" class="btn" style="font-weight: 400">Vectors</a></li>
-                  <li>
-                    <a href="#" class="btn" style="font-weight: 400">Vectors Vectors</a>
-                  </li>
-                  <li><a href="#" class="btn" style="font-weight: 400">Vectors</a></li>
                 </ul>
               </div>
             </div>
@@ -451,10 +435,8 @@ import "swiper/css/navigation";
             <div>
               <p class="text-[22px] text-[#5b5b5b]">
                 Showing results for
-                <span class="text-[#121212] font-semibold"
-                  >Happy Valentine S Day Images</span
-                >
-                - Page 2
+                <span class="text-[#121212] font-semibold">{{ query?.query }}</span>
+                - Page {{ page }}
               </p>
             </div>
             <div class="flex items-center justify-between my-5">
@@ -479,7 +461,7 @@ import "swiper/css/navigation";
                   <span class="font-normal">300</span>
                 </button>
                 <button
-                  class="flex items-center gap-3 cursor-pointer pb-3 text-[14px] font-semibold"
+                  class="flex items-center gap-3 cursor-pointer pb-3 text-[14px] font-semibold hidden"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -555,12 +537,122 @@ import "swiper/css/navigation";
             <div class="filter-result__product gap-6">
               <div class="flex flex-col gap-6">
                 <!-- item -->
-                <div class="filter-result__item relative rounded-lg overflow-hidden">
-                  <a href="#">
+                <div
+                  v-for="item in results?.[0]"
+                  :key="item.id"
+                  class="filter-result__item relative rounded-lg overflow-hidden"
+                  @click="handleShowDetail(item)"
+                >
+                  <div class="cursor-pointer">
+                    <video
+                      v-if="item?.file_type === 'video'"
+                      class="h-full w-full object-cover"
+                      @mouseover="playVideo"
+                      @mouseleave="stopVideo"
+                    >
+                      <source :src="item.file_url" type="video/mp4" />
+                    </video>
                     <img
-                      src="https://img.freepik.com/free-vector/gradient-valentine-s-day-background_52683-80623.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
+                      v-else-if="item?.file_type === 'image'"
+                      :src="item?.file_url"
+                      :alt="item?.title"
                     />
-                  </a>
+                  </div>
+                  <div class="absolute bg-opacity pointer-events-none inset-0"></div>
+                  <div
+                    class="absolute btn-actions w-fit top-0 right-0 flex flex-col h-full rounded-md py-3.5 pe-3.5 text-white"
+                  >
+                    <div
+                      class="flex flex-col items-end flex-wrap z-50 ms-auto h-full gap-1.5"
+                    >
+                      <button
+                        class="btn justify-center bg-white w-[35px] h-[35px]"
+                        style="color: #333; padding: 4px"
+                        title="Download"
+                        @click.stop="handleDownload"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-download"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"
+                          />
+                          <path
+                            d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        class="btn justify-center bg-white w-[35px] h-[35px]"
+                        style="color: #333; padding: 4px"
+                        title="Add to collection"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-folder-plus"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            d="m.5 3 .04.87a2 2 0 0 0-.342 1.311l.637 7A2 2 0 0 0 2.826 14H9v-1H2.826a1 1 0 0 1-.995-.91l-.637-7A1 1 0 0 1 2.19 4h11.62a1 1 0 0 1 .996 1.09L14.54 8h1.005l.256-2.819A2 2 0 0 0 13.81 3H9.828a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 6.172 1H2.5a2 2 0 0 0-2 2m5.672-1a1 1 0 0 1 .707.293L7.586 3H2.19q-.362.002-.683.12L1.5 2.98a1 1 0 0 1 1-.98z"
+                          />
+                          <path
+                            d="M13.5 9a.5.5 0 0 1 .5.5V11h1.5a.5.5 0 1 1 0 1H14v1.5a.5.5 0 1 1-1 0V12h-1.5a.5.5 0 0 1 0-1H13V9.5a.5.5 0 0 1 .5-.5"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        class="btn justify-center bg-white w-[35px] h-[35px]"
+                        style="color: #333; padding: 4px"
+                        title="Like"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-heart"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-6">
+                <!-- item -->
+                <div
+                  v-for="item in results?.[1]"
+                  :key="item.id"
+                  class="filter-result__item relative rounded-lg overflow-hidden"
+                  @click="handleShowDetail(item)"
+                >
+                  <div class="cursor-pointer">
+                    <video
+                      v-if="item?.file_type === 'video'"
+                      class="h-full w-full object-cover"
+                      @mouseover="playVideo"
+                      @mouseleave="stopVideo"
+                    >
+                      <source :src="item.file_url" type="video/mp4" />
+                    </video>
+                    <img
+                      v-else-if="item?.file_type === 'image'"
+                      :src="item?.file_url"
+                      :alt="item?.title"
+                    />
+                  </div>
                   <div class="absolute bg-opacity pointer-events-none inset-0"></div>
                   <div
                     class="absolute btn-actions w-fit top-0 right-0 flex flex-col h-full rounded-md py-3.5 pe-3.5 text-white"
@@ -631,219 +723,193 @@ import "swiper/css/navigation";
                     </div>
                   </div>
                 </div>
+              </div>
+              <div class="flex flex-col gap-6">
                 <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
+                <div
+                  v-for="item in results?.[2]"
+                  :key="item.id"
+                  class="filter-result__item relative rounded-lg overflow-hidden"
+                  @click="handleShowDetail(item)"
+                >
+                  <div class="cursor-pointer">
+                    <video
+                      v-if="item?.file_type === 'video'"
+                      class="h-full w-full object-cover"
+                      @mouseover="playVideo"
+                      @mouseleave="stopVideo"
+                    >
+                      <source :src="item.file_url" type="video/mp4" />
+                    </video>
                     <img
-                      src="https://img.freepik.com/premium-vector/realistic-valentine-s-day-illustration_52683-78996.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
+                      v-else-if="item?.file_type === 'image'"
+                      :src="item?.file_url"
+                      :alt="item?.title"
                     />
-                  </a>
-                </div>
-                <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
-                    <img
-                      src="https://img.freepik.com/free-vector/gradient-valentine-s-day-background_52683-80623.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
-                    />
-                  </a>
-                </div>
-                <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
-                    <img
-                      src="https://img.freepik.com/premium-vector/realistic-valentine-s-day-illustration_52683-78996.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
-                    />
-                  </a>
-                </div>
-                <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
-                    <img
-                      src="https://img.freepik.com/free-vector/gradient-valentine-s-day-background_52683-80623.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
-                    />
-                  </a>
-                </div>
-                <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
-                    <img
-                      src="https://img.freepik.com/premium-vector/realistic-valentine-s-day-illustration_52683-78996.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
-                    />
-                  </a>
+                  </div>
+                  <div class="absolute bg-opacity pointer-events-none inset-0"></div>
+                  <div
+                    class="absolute btn-actions w-fit top-0 right-0 flex flex-col h-full rounded-md py-3.5 pe-3.5 text-white"
+                  >
+                    <div
+                      class="flex flex-col items-end flex-wrap z-50 ms-auto h-full gap-1.5"
+                    >
+                      <button
+                        class="btn justify-center bg-white w-[35px] h-[35px]"
+                        style="color: #333; padding: 4px"
+                        title="Download"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-download"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"
+                          />
+                          <path
+                            d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        class="btn justify-center bg-white w-[35px] h-[35px]"
+                        style="color: #333; padding: 4px"
+                        title="Add to collection"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-folder-plus"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            d="m.5 3 .04.87a2 2 0 0 0-.342 1.311l.637 7A2 2 0 0 0 2.826 14H9v-1H2.826a1 1 0 0 1-.995-.91l-.637-7A1 1 0 0 1 2.19 4h11.62a1 1 0 0 1 .996 1.09L14.54 8h1.005l.256-2.819A2 2 0 0 0 13.81 3H9.828a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 6.172 1H2.5a2 2 0 0 0-2 2m5.672-1a1 1 0 0 1 .707.293L7.586 3H2.19q-.362.002-.683.12L1.5 2.98a1 1 0 0 1 1-.98z"
+                          />
+                          <path
+                            d="M13.5 9a.5.5 0 0 1 .5.5V11h1.5a.5.5 0 1 1 0 1H14v1.5a.5.5 0 1 1-1 0V12h-1.5a.5.5 0 0 1 0-1H13V9.5a.5.5 0 0 1 .5-.5"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        class="btn justify-center bg-white w-[35px] h-[35px]"
+                        style="color: #333; padding: 4px"
+                        title="Like"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-heart"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="flex flex-col gap-6">
                 <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
+                <div
+                  v-for="item in results?.[3]"
+                  :key="item.id"
+                  class="filter-result__item relative rounded-lg overflow-hidden"
+                  @click="handleShowDetail(item)"
+                >
+                  <div class="cursor-pointer">
+                    <video
+                      v-if="item?.file_type === 'video'"
+                      class="h-full w-full object-cover"
+                      @mouseover="playVideo"
+                      @mouseleave="stopVideo"
+                    >
+                      <source :src="item.file_url" type="video/mp4" />
+                    </video>
                     <img
-                      src="https://img.freepik.com/premium-vector/realistic-illustration-valentines-day-celebration_23-2151161160.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
+                      v-else-if="item?.file_type === 'image'"
+                      :src="item?.file_url"
+                      :alt="item?.title"
                     />
-                  </a>
-                </div>
-                <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
-                    <img
-                      src="https://img.freepik.com/premium-vector/realistic-valentines-day-celebration-background_23-2150010230.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
-                    />
-                  </a>
-                </div>
-                <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
-                    <img
-                      src="https://img.freepik.com/free-vector/flat-valentine-s-day-background_23-2149253327.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
-                    />
-                  </a>
-                </div>
-                <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
-                    <img
-                      src="https://img.freepik.com/premium-vector/realistic-illustration-valentines-day-celebration_23-2151161160.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
-                    />
-                  </a>
-                </div>
-                <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
-                    <img
-                      src="https://img.freepik.com/premium-vector/realistic-valentines-day-celebration-background_23-2150010230.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
-                    />
-                  </a>
-                </div>
-                <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
-                    <img
-                      src="https://img.freepik.com/free-vector/flat-valentine-s-day-background_23-2149253327.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
-                    />
-                  </a>
-                </div>
-                <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
-                    <img
-                      src="https://img.freepik.com/premium-vector/realistic-illustration-valentines-day-celebration_23-2151161160.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
-                    />
-                  </a>
-                </div>
-                <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
-                    <img
-                      src="https://img.freepik.com/premium-vector/realistic-valentines-day-celebration-background_23-2150010230.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
-                    />
-                  </a>
-                </div>
-                <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
-                    <img
-                      src="https://img.freepik.com/free-vector/flat-valentine-s-day-background_23-2149253327.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
-                    />
-                  </a>
-                </div>
-              </div>
-              <div class="flex flex-col gap-6">
-                <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
-                    <img
-                      src="https://img.freepik.com/premium-vector/gradient-valentine-s-day-illustration_23-2149226315.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
-                    />
-                  </a>
-                </div>
-                <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
-                    <img
-                      src="https://img.freepik.com/free-vector/realistic-valentine-s-day-youtube-thumbnail_23-2149252158.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
-                    />
-                  </a>
-                </div>
-                <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
-                    <img
-                      src="https://img.freepik.com/premium-vector/gradient-valentine-s-day-illustration_23-2149226315.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
-                    />
-                  </a>
-                </div>
-                <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
-                    <img
-                      src="https://img.freepik.com/free-vector/realistic-valentine-s-day-youtube-thumbnail_23-2149252158.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
-                    />
-                  </a>
-                </div>
-                <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
-                    <img
-                      src="https://img.freepik.com/premium-vector/gradient-valentine-s-day-illustration_23-2149226315.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
-                    />
-                  </a>
-                </div>
-                <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
-                    <img
-                      src="https://img.freepik.com/free-vector/realistic-valentine-s-day-youtube-thumbnail_23-2149252158.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
-                    />
-                  </a>
-                </div>
-              </div>
-              <div class="flex flex-col gap-6">
-                <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
-                    <img
-                      src="https://img.freepik.com/premium-vector/flat-valentines-day-background_23-2149997096.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
-                    />
-                  </a>
-                </div>
-                <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
-                    <img
-                      src="https://img.freepik.com/premium-psd/flowers-valentines-day-with-mock-up_23-2148373257.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
-                    />
-                  </a>
-                </div>
-                <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
-                    <img
-                      src="https://img.freepik.com/premium-vector/flat-valentines-day-background_23-2149997096.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
-                    />
-                  </a>
-                </div>
-                <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
-                    <img
-                      src="https://img.freepik.com/premium-psd/flowers-valentines-day-with-mock-up_23-2148373257.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
-                    />
-                  </a>
-                </div>
-                <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
-                    <img
-                      src="https://img.freepik.com/premium-vector/flat-valentines-day-background_23-2149997096.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
-                    />
-                  </a>
-                </div>
-                <!-- item -->
-                <div class="rounded-lg overflow-hidden">
-                  <a href="#">
-                    <img
-                      src="https://img.freepik.com/premium-psd/flowers-valentines-day-with-mock-up_23-2148373257.jpg?ga=GA1.1.1371173213.1736611469&semt=ais_authors_boost"
-                    />
-                  </a>
+                  </div>
+                  <div class="absolute bg-opacity pointer-events-none inset-0"></div>
+                  <div
+                    class="absolute btn-actions w-fit top-0 right-0 flex flex-col h-full rounded-md py-3.5 pe-3.5 text-white"
+                  >
+                    <div
+                      class="flex flex-col items-end flex-wrap z-50 ms-auto h-full gap-1.5"
+                    >
+                      <button
+                        class="btn justify-center bg-white w-[35px] h-[35px]"
+                        style="color: #333; padding: 4px"
+                        title="Download"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-download"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"
+                          />
+                          <path
+                            d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        class="btn justify-center bg-white w-[35px] h-[35px]"
+                        style="color: #333; padding: 4px"
+                        title="Add to collection"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-folder-plus"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            d="m.5 3 .04.87a2 2 0 0 0-.342 1.311l.637 7A2 2 0 0 0 2.826 14H9v-1H2.826a1 1 0 0 1-.995-.91l-.637-7A1 1 0 0 1 2.19 4h11.62a1 1 0 0 1 .996 1.09L14.54 8h1.005l.256-2.819A2 2 0 0 0 13.81 3H9.828a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 6.172 1H2.5a2 2 0 0 0-2 2m5.672-1a1 1 0 0 1 .707.293L7.586 3H2.19q-.362.002-.683.12L1.5 2.98a1 1 0 0 1 1-.98z"
+                          />
+                          <path
+                            d="M13.5 9a.5.5 0 0 1 .5.5V11h1.5a.5.5 0 1 1 0 1H14v1.5a.5.5 0 1 1-1 0V12h-1.5a.5.5 0 0 1 0-1H13V9.5a.5.5 0 0 1 .5-.5"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        class="btn justify-center bg-white w-[35px] h-[35px]"
+                        style="color: #333; padding: 4px"
+                        title="Like"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-heart"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -851,7 +917,11 @@ import "swiper/css/navigation";
             <div class="filter-result__bottom flex items-center justify-between mt-8">
               <div class="w-[150px]"></div>
               <div class="filter-result__bottom--actions flex items-center gap-3">
-                <button class="btn">
+                <button
+                  v-if="pagination?.hasPrev"
+                  class="btn"
+                  @click.prevent="handlePage(-1)"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="-49 141 512 512"
@@ -865,7 +935,12 @@ import "swiper/css/navigation";
                     ></path>
                   </svg>
                 </button>
-                <button class="btn bg-[#336aea]" style="color: #fff">
+                <button
+                  v-if="pagination?.hasNext"
+                  class="btn bg-[#336aea]"
+                  style="color: #fff"
+                  @click.prevent="handlePage(1)"
+                >
                   Next
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -887,14 +962,19 @@ import "swiper/css/navigation";
                   class="w-[60px] rounded-xl px-2 py-1"
                   style="border: 1px solid #e5e5e5"
                   type="number"
-                  value="1"
+                  v-model="page"
                 />
-                <span>of 100</span>
+                <span>of {{ pagination?.totalPages }}</span>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <resource-detail
+      v-if="showDetail"
+      :data="dataDetail"
+      @close-modal="handleCloseModal"
+    />
   </div>
 </template>
