@@ -30,6 +30,11 @@
     height: 0;
 }
 
+#search .filter-detail .filter-detail__more li.active button {
+    color: #fff;
+    background-color: #648eef;
+}
+
 #search .filter_right .slide__right {
     position: relative;
 }
@@ -96,4 +101,90 @@
 
 #search .filter-result__item:hover .btn-actions {
     opacity: 1;
+}
+
+.modal-detail .btn-download .btn {
+    height: 38px;
+}
+
+.modal-detail .btn-download .btn:first-child {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.modal-detail .btn-download .btn:last-child {
+    position: relative;
+    margin-left: -2px;
+    padding: 8px 10px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.modal-detail .btn-download .btn:last-child:hover {
+    opacity: 1;
+}
+
+.modal-detail .btn-download .btn:last-child .dropdown {
+    position: absolute;
+    right: 0;
+    top: 45px;
+    color: #424242;
+    min-width: 150px;
+    border-radius: 6px;
+    background-color: #fff;
+    box-shadow: 0px -7px 42px rgba(0, 0, 0, 0.1);
+}
+
+.modal-detail .btn-download .btn:last-child .dropdown::before {
+    content: "";
+    position: absolute;
+    top: -6px;
+    right: 10px;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid #fff;
+}
+
+.modal-detail .btn-download .btn:last-child .dropdown li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    gap: 8px;
+    font-weight: 400;
+}
+
+.modal-detail .btn-download .btn:last-child .dropdown li:first-child {
+    pointer-events: none;
+    text-transform: uppercase;
+    color: #c8c8c8;
+}
+
+.modal-detail .btn-download .btn:last-child .dropdown li:hover {
+    background-color: #f5f5f5;
+}
+
+.modal-detail .preview:hover .btn-actions {
+    opacity: 1;
+}
+
+.modal-detail .btn-actions {
+    opacity: 0;
+    transition: all 0.2s ease-in-out;
+}
+
+.modal-detail .keyword-list .btn-arrow {
+    display: none;
+}
+
+.modal-detail .keyword-list:hover .btn-arrow {
+    display: flex;
+}
+
+.modal-detail .btn-download-more .dropdown {
+    display: none;
+}
+
+.modal-detail .btn-download-more.active .dropdown {
+    display: block;
 }

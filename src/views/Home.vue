@@ -16,6 +16,8 @@ const swiperInstance = ref(null);
 const slides = ref([]);
 const favorites = ref([]);
 
+const searchInput = ref("");
+
 const bannerTabIndex = ref(0);
 
 const initSwiper = () => {
@@ -109,6 +111,10 @@ const init = async () => {
   favorites.value = await getTopFavorites(9);
 };
 
+const handleSearch = () => {
+  window.location.href = `/search?query=${searchInput.value}`;
+};
+
 onMounted(() => {
   initSwiper();
   init();
@@ -169,6 +175,8 @@ onMounted(() => {
               class="p-2.5 outline-0"
               style="flex: 1"
               placeholder="Search all assets"
+              v-model="searchInput"
+              @keyup.enter="handleSearch"
             />
             <div class="group-actions flex items-center gap-3">
               <button class="btn" style="padding: 10px">
@@ -204,7 +212,7 @@ onMounted(() => {
                   </svg>
                 </span>
               </button>
-              <button class="btn bg-[#336aea]" style="color: #fff">
+              <button class="btn bg-[#336aea]" style="color: #fff" @click="handleSearch">
                 <span class="me-1">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -269,7 +277,7 @@ onMounted(() => {
                 <div class="swiper-slide" v-for="(slide, index) in slides" :key="index">
                   <a
                     v-if="slide?.file_type === 'image'"
-                    href="#"
+                    :href="`search?query=${slide?.tag_name}&detail_id=${slide?.id}`"
                     class="swiper-slide__link"
                   >
                     <img class="w-full h-full object-cover" :src="slide.file_url" />
@@ -378,7 +386,7 @@ onMounted(() => {
         </p>
         <div class="flex items-center justify-center gap-3 mt-7 mb-10">
           <template v-for="tag in tags" :key="tag.id">
-            <button class="btn" style="font-size: 12px">
+            <a :href="`/search?query=${tag.name}`" class="btn" style="font-size: 12px">
               <span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -393,14 +401,14 @@ onMounted(() => {
                 </svg>
               </span>
               {{ tag.name }}
-            </button>
+            </a>
           </template>
         </div>
         <div class="home-designers__product grid grid-cols-7 grid-rows-3 gap-7">
           <template v-for="favorite in favorites" :key="favorite.id">
             <template v-if="favorite.file_type === 'video'">
               <a
-                href="#"
+                :href="`search?query=${favorite?.tag_name}&detail_id=${favorite?.id}`"
                 class="home-designers__product--item relative h-[220px] rounded-lg font-bold overflow-hidden"
               >
                 <video
@@ -428,9 +436,9 @@ onMounted(() => {
                 ></div>
               </a>
             </template>
-            <template v-else>
+            <template v-else-if="favorite.file_type === 'image'">
               <a
-                href="#"
+                :href="`search?query=${favorite?.tag_name}&detail_id=${favorite?.id}`"
                 class="home-designers__product--item relative h-[220px] rounded-lg font-bold overflow-hidden"
               >
                 <img
