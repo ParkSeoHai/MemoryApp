@@ -113,7 +113,7 @@ const toggleMobileMenu = () => {
       </li>
     </ul>
     <div v-if="!user" class="btn-actions ms-auto">
-      <button class="btn">Sign in</button>
+      <a href="/register" class="btn">Sign in</a>
     </div>
     <template v-else>
       <div class="flex items-center gap-2 ms-auto cursor-pointer">
