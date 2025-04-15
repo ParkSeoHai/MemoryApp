@@ -5,6 +5,8 @@ import axios from "axios";
 const url = "http://localhost:3000";
 const user = ref();
 
+const showUserDropdown = ref(false);
+
 const categories = ref([]);
 
 // get data categories
@@ -38,7 +40,8 @@ const toggleMobileMenu = () => {
 <template>
   <header id="header" class="flex items-center">
     <a href="/" class="logo">
-      <svg
+      <img src="/logo.svg" class="w-[65px] h-[65px] mt-[8px]" />
+      <!-- <svg
         width="160"
         height="44"
         fill="currentColor"
@@ -70,11 +73,11 @@ const toggleMobileMenu = () => {
         <path
           d="M496.49 0.0100098H402.03C400.72 0.0100098 399.65 1.07001 399.65 2.39001V102.54C399.65 103.85 400.71 104.92 402.03 104.92H433.23C434.54 104.92 435.61 103.86 435.61 102.54V69.39C435.61 68.72 436.15 68.18 436.82 68.18H496.65C520.63 68.18 538.8 55.68 538.8 33.61C538.8 11.54 520.63 0.0100098 496.5 0.0100098H496.49ZM491.95 44.68H437.98C436.67 44.68 435.6 43.62 435.6 42.3V27.13C435.6 25.82 436.66 24.76 437.98 24.76H491.17C498.8 24.76 503.78 28.49 503.78 34.41C503.78 41.26 499.11 44.68 491.95 44.68Z"
         ></path>
-      </svg>
+      </svg> -->
     </a>
     <ul class="nav-header flex items-center ms-10 font-bold">
       <li v-for="category in categories" :key="category.id">
-        <span>{{ category.name }}</span>
+        <a href="">{{ category.name }}</a>
         <div v-if="category.subCategories?.length > 0" class="nav-header__dropdown">
           <div class="nav-header__dropdown--right">
             <ul class="list-link">
@@ -116,22 +119,131 @@ const toggleMobileMenu = () => {
       <a href="/register" class="btn">Sign in</a>
     </div>
     <template v-else>
-      <div class="flex items-center gap-2 ms-auto cursor-pointer">
-        <img :src="user?.avatar" class="w-[24px] h-[24px] rounded-full" />
-        <span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 512 512"
-            width="16"
-            height="16"
-            fill="#fff"
-            aria-hidden="true"
-          >
-            <path
-              d="m256 275.6-92.3-92.3c-9.8-9.8-25.6-9.8-35.4 0s-9.8 25.6 0 35.4l110 110c4.9 4.9 11.3 7.3 17.7 7.3s12.8-2.4 17.7-7.3l110-110c9.8-9.8 9.8-25.6 0-35.4s-25.6-9.8-35.4 0z"
-            ></path>
-          </svg>
-        </span>
+      <div class="relative ms-auto">
+        <div
+          class="flex items-center gap-2 cursor-pointer"
+          @click="showUserDropdown = !showUserDropdown"
+        >
+          <img :src="user?.avatar" class="w-[24px] h-[24px] rounded-full" />
+          <span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 512 512"
+              width="16"
+              height="16"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="m256 275.6-92.3-92.3c-9.8-9.8-25.6-9.8-35.4 0s-9.8 25.6 0 35.4l110 110c4.9 4.9 11.3 7.3 17.7 7.3s12.8-2.4 17.7-7.3l110-110c9.8-9.8 9.8-25.6 0-35.4s-25.6-9.8-35.4 0z"
+              ></path>
+            </svg>
+          </span>
+        </div>
+        <div
+          v-if="showUserDropdown"
+          class="user-dropdown absolute w-[320px] right-0 top-[35px] bg-white z-[999] rounded-md shadow-md"
+        >
+          <div class="pt-[25px] pb-[5px]">
+            <div class="px-[25px] flex items-center gap-4 mb-5">
+              <img class="w-[36px] h-[36px] rounded-full" :src="user?.avatar" />
+              <div class="text-black text-[14px]">
+                <span class="block font-bold">{{ user?.name }}</span>
+                <span class="block text-[13px] text-[#424242]">{{ user?.email }}</span>
+              </div>
+            </div>
+            <div class="px-[25px] mb-5">
+              <button
+                class="btn bg-[#336aea] mt-3 w-full justify-center"
+                style="color: #fff; border: none; font-size: 13px; padding: 4px 12px"
+              >
+                Get a plan
+              </button>
+              <button
+                class="btn bg-white mt-3 w-full justify-center border border-[#d8d8d8]"
+                style="font-size: 13px; padding: 4px 12px; color: #424242"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512"
+                  width="16"
+                  height="16"
+                  aria-hidden="true"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M407.2 255.1c17.7-21.4 27.8-48.1 27.8-75.9C435 112.3 380.7 58 314 58c-43.2 0-81.2 22.4-102.9 56.1-16.1-10.8-35.3-16.8-54.9-16.8-54.3 0-98.6 43.9-98.6 97.9 0 20.2 6.5 39.6 18.1 55.9-16.6 10.1-31.5 23.2-43.4 38.7C11.2 317.2 0 350.1 0 384.7c0 13.8 11.2 25 25 25h92c-.6 6.4-1 12.8-1 19.3 0 13.8 11.2 25 25 25h346c13.8 0 25-11.2 25-25 0-73.1-41.5-139.7-104.8-173.9M53 359.7c9-36.4 37-66.5 74.3-77.1 9.7-2.8 16.7-11.1 18-21 1.2-10-3.7-19.7-12.4-24.7-15.6-8.9-25.2-24.8-25.2-41.6 0-26.4 21.8-47.9 48.6-47.9 14 0 27.5 6.2 36.8 16.8-.6 4.9-.9 10-.9 15 0 27.7 10.4 54.6 28.5 76.1-42.3 23-74.8 60.4-91.7 104.5H53zM168.2 404c9.7-55 50.9-101.4 106.7-117.3 9.7-2.8 16.7-11.1 18-21s-3.7-19.7-12.4-24.7c-23.3-13.3-38.4-37.6-38.4-61.8 0-18.9 7.5-36.7 21.2-50.2s31.7-20.9 50.8-20.9c39.1 0 71 31.9 71 71.1 0 25-14.3 48.6-37.4 61.8-8.7 5-13.6 14.7-12.4 24.7s8.3 18.3 18 21c55.8 15.9 97 62.4 106.7 117.3z"
+                  ></path>
+                </svg>
+                Add members
+              </button>
+            </div>
+            <div class="border border-[#e5e5e5]"></div>
+            <div class="mt-1">
+              <a
+                href="/user/me"
+                class="px-[25px] h-[45px] w-full flex items-center gap-3 text-[#121212] hover:bg-[#f0f0f0]"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="-49 141 512 512"
+                  width="16"
+                  height="16"
+                  aria-hidden="true"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M423 638H-9c-13.807 0-25-11.193-25-25 0-53.438 17.131-104.058 49.542-146.388 22.2-28.994 50.961-52.656 83.376-69.006C75.53 371.377 62 337.07 62 301c0-79.953 65.047-145 145-145s145 65.047 145 145c0 36.07-13.53 70.377-36.918 96.606 32.416 16.349 61.177 40.012 83.376 69.005C430.869 508.942 448 559.562 448 613c0 13.807-11.193 25-25 25M17.657 588h378.687c-9.908-74.383-63.38-137.724-136.792-158.682a25 25 0 0 1-5.533-45.75C283.615 366.669 302 335.03 302 301c0-52.383-42.617-95-95-95s-95 42.617-95 95c0 34.03 18.386 65.668 47.981 82.568a25 25 0 0 1 12.423 24.712 25 25 0 0 1-17.956 21.038C81.037 450.276 27.564 513.617 17.657 588"
+                  ></path>
+                </svg>
+                <p>Account</p>
+              </a>
+              <button
+                class="px-[25px] h-[45px] w-full flex items-center gap-3 text-[#121212] hover:bg-[#f0f0f0]"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="-49 141 512 512"
+                  width="16"
+                  height="16"
+                  aria-hidden="true"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M438 403c-13.808 0-25 11.193-25 25v134c0 19.299-15.701 35-35 35H36c-19.299 0-35-15.701-35-35V428c0-13.807-11.193-25-25-25s-25 11.193-25 25v134c0 46.869 38.131 85 85 85h342c46.869 0 85-38.131 85-85V428c0-13.807-11.192-25-25-25"
+                  ></path>
+                  <path
+                    d="M189.322 530.678a25.004 25.004 0 0 0 35.356 0l84.853-84.853c9.763-9.763 9.763-25.592 0-35.355s-25.592-9.763-35.355 0L232 452.645V172c0-13.807-11.193-25-25-25s-25 11.193-25 25v280.645l-42.175-42.175c-9.764-9.763-25.592-9.763-35.355 0s-9.763 25.592 0 35.355z"
+                  ></path>
+                </svg>
+                <p>Downloads</p>
+              </button>
+            </div>
+            <div class="border border-[#e5e5e5]"></div>
+            <div class="mt-1">
+              <button
+                class="px-[25px] h-[45px] w-full flex items-center gap-3 text-[#121212] hover:bg-[#f0f0f0]"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="-49 141 512 512"
+                  width="16"
+                  height="16"
+                  aria-hidden="true"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M207 372c-13.807 0-25-11.193-25-25V166c0-13.807 11.193-25 25-25s25 11.193 25 25v181c0 13.807-11.193 25-25 25"
+                  ></path>
+                  <path
+                    d="M370.342 258.658c-27.847-27.847-61.558-47.693-98.342-58.419v52.84C339.785 279.251 388 345.096 388 422c0 99.804-81.196 181-181 181S26 521.804 26 422c0-76.904 48.215-142.749 116-168.921v-52.84c-36.784 10.726-70.494 30.572-98.342 58.419C.028 302.288-24 360.298-24 422S.028 541.712 43.658 585.342 145.298 653 207 653s119.712-24.028 163.342-67.658S438 483.702 438 422s-24.028-119.712-67.658-163.342"
+                  ></path>
+                </svg>
+                <p>Logout</p>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </template>
 

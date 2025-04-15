@@ -7,7 +7,7 @@ import {
 } from "firebase/auth";
 import { auth } from "../config/firebase";
 import { ApiRegister } from "../service/auth";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "vue3-toastify";
 
 function RegisterComponent() {
   const handleRegisterByGoogle = async () => {
@@ -118,7 +118,7 @@ function RegisterComponent() {
         </div>
       </div>
 
-      <ToastContainer
+      {/* <ToastContainer
         position="top-right"
         autoClose={3000}
         hideProgressBar={false}
@@ -129,7 +129,7 @@ function RegisterComponent() {
         draggable
         pauseOnHover
         theme="light"
-      />
+      /> */}
     </div>
   );
 }

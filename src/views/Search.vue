@@ -6,6 +6,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import axios from "axios";
 import ResourceDetail from "./ResourceDetail.vue";
+import ModalAddCollection from "../components/ModalAddCollection.vue";
 
 const query = ref();
 const url = "http://localhost:3000";
@@ -17,9 +18,13 @@ const resultCol = ref(4);
 const pagination = ref();
 const page = ref(1);
 const categoryId = ref(null);
+const searchQuery = ref("");
 
 const showDetail = ref(false);
 const dataDetail = ref({});
+
+const showModalCollection = ref(false);
+const dataCollection = ref({});
 
 // watch(page, async () => {
 //   if (page.value) {
@@ -134,8 +139,11 @@ const init = async () => {
 const handleCloseModal = () => {
   showDetail.value = false;
   const url = new URL(window.location.href); // Lấy URL hiện tại
-  url.searchParams.delete("detail_id");
-  window.location.href = url;
+  console.log(url.searchParams);
+  if (url.searchParams.has("detail_id")) {
+    url.searchParams.delete("detail_id");
+    window.location.href = url;
+  }
 };
 
 const handleDownload = () => {
@@ -148,8 +156,24 @@ const handleShowDetail = (item) => {
   dataDetail.value.slides = slides.value;
 };
 
-onMounted(() => {
-  init();
+const handleShowAddToCollection = (item) => {
+  showModalCollection.value = true;
+  dataCollection.value.item = item;
+};
+
+const handleCloseModalCollection = () => {
+  showModalCollection.value = false;
+  dataCollection.value.item = {};
+};
+
+const handleSearch = () => {
+  const url = new URL(window.location.href); // Lấy URL hiện tại
+  url.searchParams.set("query", searchQuery.value);
+  window.location.href = url;
+};
+
+onMounted(async () => {
+  await init();
 });
 </script>
 
@@ -179,9 +203,10 @@ onMounted(() => {
           class="p-2.5 outline-0"
           style="flex: 1"
           placeholder="Search all assets"
+          v-model="searchQuery"
         />
         <div class="group-actions flex items-center gap-3">
-          <button class="btn" style="padding: 10px; border: none">
+          <button class="btn" style="padding: 10px; border: none; display: none">
             <span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -196,7 +221,7 @@ onMounted(() => {
               </svg>
             </span>
           </button>
-          <button class="btn" style="padding: 10px; border: none">
+          <button class="btn" style="padding: 10px; border: none; display: none">
             <span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -214,7 +239,7 @@ onMounted(() => {
               </svg>
             </span>
           </button>
-          <button class="btn bg-[#336aea]" style="color: #fff">
+          <button class="btn bg-[#336aea]" style="color: #fff" @click="handleSearch">
             <span class="me-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -548,7 +573,9 @@ onMounted(() => {
               </div>
             </div>
             <!-- result -->
-            <div class="filter-result__product gap-6">
+            <div
+              class="filter-result__product gap-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+            >
               <div class="flex flex-col gap-6">
                 <!-- item -->
                 <div
@@ -605,6 +632,7 @@ onMounted(() => {
                         class="btn justify-center bg-white w-[35px] h-[35px]"
                         style="color: #333; padding: 4px"
                         title="Add to collection"
+                        @click.stop="handleShowAddToCollection(item)"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -699,6 +727,7 @@ onMounted(() => {
                         class="btn justify-center bg-white w-[35px] h-[35px]"
                         style="color: #333; padding: 4px"
                         title="Add to collection"
+                        @click.stop="handleShowAddToCollection(item)"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -744,7 +773,7 @@ onMounted(() => {
                   v-for="item in results?.[2]"
                   :key="item.id"
                   class="filter-result__item relative rounded-lg overflow-hidden"
-                  @click="handleShowDetail(item)"
+                  @click.stop="handleShowDetail(item)"
                 >
                   <div class="cursor-pointer">
                     <video
@@ -793,6 +822,7 @@ onMounted(() => {
                         class="btn justify-center bg-white w-[35px] h-[35px]"
                         style="color: #333; padding: 4px"
                         title="Add to collection"
+                        @click.stop="handleShowAddToCollection(item)"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -887,6 +917,7 @@ onMounted(() => {
                         class="btn justify-center bg-white w-[35px] h-[35px]"
                         style="color: #333; padding: 4px"
                         title="Add to collection"
+                        @click.stop="handleShowAddToCollection(item)"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -988,7 +1019,13 @@ onMounted(() => {
     <resource-detail
       v-if="showDetail"
       :data="dataDetail"
+      @show-modal-collection="handleShowAddToCollection"
       @close-modal="handleCloseModal"
     />
   </div>
+  <modal-add-collection
+    v-if="showModalCollection && dataCollection"
+    :data="dataCollection"
+    @close-modal="handleCloseModalCollection"
+  />
 </template>
