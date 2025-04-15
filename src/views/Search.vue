@@ -125,9 +125,7 @@ const init = async () => {
   results.value = splitIntoFourEqualParts(resources || []);
   // show detail
   if (query.value?.detail_id) {
-    const dataDetail = resources.find(
-      (item) => item.id === Number(query.value.detail_id)
-    );
+    const dataDetail = resources.find((item) => item.id == query.value.detail_id);
     if (dataDetail) {
       handleShowDetail(dataDetail);
     }
