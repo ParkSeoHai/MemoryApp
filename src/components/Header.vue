@@ -1,8 +1,9 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import axios from "axios";
+import { URL_API } from "../constant";
 
-const url = "http://localhost:3000";
+const url = URL_API;
 const user = ref();
 
 const showUserDropdown = ref(false);

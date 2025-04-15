@@ -5,8 +5,9 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import axios from "axios";
+import { URL_API } from "../constant";
 
-const url = "http://localhost:3000";
+const url = URL_API;
 
 const categories = ref([]);
 const tags = ref([]);
