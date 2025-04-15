@@ -1,0 +1,16 @@
+
+#user-page {
+    min-height: calc(100vh - 45px);
+}
+
+#user-page .tabs-menu {
+    border-bottom: 1px solid #d8d8d8;
+}
+
+#user-page .tab-item:hover {
+    border-bottom: 1px solid #9c9c9c;
+}
+
+#user-page .tab-item.active {
+    border-bottom: 1px solid #9c9c9c;
+}

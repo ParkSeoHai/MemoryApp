@@ -1,0 +1,12 @@
+
+.modal-collection .list-collection .collection-item:hover .collection-status {
+    display: flex;
+}
+
+.modal-collection .list-collection .collection-item.active {
+    color: #336aea;
+}
+
+.modal-collection .list-collection .collection-item:hover .collection-status-selected {
+    display: none;
+}

@@ -7,7 +7,7 @@ import {
 } from "firebase/auth";
 import { auth } from "../config/firebase";
 import { ApiLogin } from "../service/auth";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "vue3-toastify";
 
 function LoginComponent() {
   const handleLoginByGoogle = async () => {
@@ -81,7 +81,7 @@ function LoginComponent() {
         <div className="w-full max-w-[450px] px-8 py-12 flex flex-col items-center">
           {/* Logo */}
           <img
-            src="https://www.freepik.com/v2/assets/freepik.8bacab41.svg"
+            src="/logo.svg"
             alt="logo"
             className="w-[150px] h-auto mb-12 cursor-pointer"
           />
@@ -120,7 +120,7 @@ function LoginComponent() {
         </div>
       </div>
 
-      <ToastContainer
+      {/* <ToastContainer
         position="top-right"
         autoClose={3000}
         hideProgressBar={false}
@@ -131,7 +131,7 @@ function LoginComponent() {
         draggable
         pauseOnHover
         theme="light"
-      />
+      /> */}
     </div>
   );
 }

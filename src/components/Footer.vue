@@ -7,10 +7,10 @@
       style="padding-top: 40px; padding-bottom: 40px; border-bottom: 1px solid #424242"
     >
       <div class="grid grid-cols-4">
-        <ul class="flex flex-col gap-2.5 text-[14px] text-[#777777] font-semibold">
+        <!-- <ul class="flex flex-col gap-2.5 text-[14px] text-[#777777] font-semibold">
           <li class="uppercase text-white">Tools</li>
           <li><a href="#" class="block hover:text-white">AI Image Generator</a></li>
-        </ul>
+        </ul> -->
         <ul class="flex flex-col gap-2.5 text-[14px] text-[#777777] font-semibold">
           <li class="uppercase text-white">Information</li>
           <li><a href="#" class="block hover:text-white">Pricing</a></li>
@@ -56,12 +56,13 @@
             <p class="text-[15px] text-[#777777] font-semibold">
               Get exclusive assets sent straight to your inbox
             </p>
-            <button
-              class="btn bg-[#336aea] mt-3"
+            <a
+              href="/register"
+              class="w-fit btn bg-[#336aea] mt-3"
               style="color: #fff; border: none; font-size: 15px; padding: 10px 25px"
             >
-              Sign up
-            </button>
+              Sign in
+            </a>
           </div>
         </div>
       </div>
@@ -69,7 +70,7 @@
     <div class="container text-white" style="padding-top: 40px; padding-bottom: 40px">
       <div class="flex items-center gap-3">
         <a href="/" class="logo">
-          <svg
+          <!-- <svg
             width="112"
             height="44"
             fill="currentColor"
@@ -101,10 +102,11 @@
             <path
               d="M496.49 0.0100098H402.03C400.72 0.0100098 399.65 1.07001 399.65 2.39001V102.54C399.65 103.85 400.71 104.92 402.03 104.92H433.23C434.54 104.92 435.61 103.86 435.61 102.54V69.39C435.61 68.72 436.15 68.18 436.82 68.18H496.65C520.63 68.18 538.8 55.68 538.8 33.61C538.8 11.54 520.63 0.0100098 496.5 0.0100098H496.49ZM491.95 44.68H437.98C436.67 44.68 435.6 43.62 435.6 42.3V27.13C435.6 25.82 436.66 24.76 437.98 24.76H491.17C498.8 24.76 503.78 28.49 503.78 34.41C503.78 41.26 499.11 44.68 491.95 44.68Z"
             ></path>
-          </svg>
+          </svg> -->
+          <img src="/logo.svg" class="w-[65px] h-[65px] mt-[8px]" />
         </a>
         <p class="text-[14px] text-[#c8c8c8]">
-          Copyright © 2010-2025 Freepik Company S.L. All rights reserved.
+          Copyright © 2010-2025 Memory Company S.L. All rights reserved.
         </p>
       </div>
     </div>

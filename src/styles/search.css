@@ -86,10 +86,10 @@
     border: 1px solid #e5e5e5
 }
 
-#search .filter-result__product {
+/* #search .filter-result__product {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-}
+} */
 
 #search .filter-result__item .btn-actions {
     opacity: 0;

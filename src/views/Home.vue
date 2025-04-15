@@ -179,7 +179,7 @@ onMounted(() => {
               @keyup.enter="handleSearch"
             />
             <div class="group-actions flex items-center gap-3">
-              <button class="btn" style="padding: 10px">
+              <button class="btn" style="padding: 10px; display: none">
                 <span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -194,7 +194,7 @@ onMounted(() => {
                   </svg>
                 </span>
               </button>
-              <button class="btn" style="padding: 10px">
+              <button class="btn" style="padding: 10px; display: none">
                 <span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -363,15 +363,14 @@ onMounted(() => {
 
     <div class="container">
       <div class="flex items-center justify-center bg-[#f0f4fd] rounded-lg h-[84px]">
-        <p class="text-[17px] font-semibold me-8">
-          Sign up for 10 daily free downloads and access to AI tools
-        </p>
-        <button
+        <p class="text-[17px] font-semibold me-8">Sign up for 10 daily free downloads</p>
+        <a
+          href="/register"
           class="btn bg-black"
           style="color: #fff; padding: 10px 20px; font-size: 15px"
         >
-          Sign up now
-        </button>
+          Sign in now
+        </a>
       </div>
     </div>
 
@@ -382,7 +381,7 @@ onMounted(() => {
       <div>
         <h2 class="text-[36px] text-center mb-2.5 font-semibold">Designers’ faves</h2>
         <p class="text-[#424242] text-center">
-          Check out what’s getting the most <i>olés</i> on Freepik right now
+          Check out what’s getting the most <i>olés</i> on Memory right now
         </p>
         <div class="flex items-center justify-center gap-3 mt-7 mb-10">
           <template v-for="tag in tags" :key="tag.id">
@@ -473,7 +472,7 @@ onMounted(() => {
       <div>
         <h2 class="text-[56px] font-semibold text-center mb-3.5">Get inspired</h2>
         <p class="text-[17px] text-[#424242] text-center">
-          Discover thousands of amazing images created by Freepik’s AI artists
+          Discover thousands of amazing images created by Memory’s artists
         </p>
         <div class="home-inspired grid grid-cols-4 gap-8 mt-8">
           <div class="flex flex-col gap-8">
@@ -611,33 +610,32 @@ onMounted(() => {
     <section class="container">
       <div style="padding: 80px 80px 120px 80px">
         <div class="text-center font-semibold">
-          <h4 class="text-[#336aea] text-[14px] uppercase mb-1">Freepik in numbers</h4>
+          <h4 class="text-[#336aea] text-[14px] uppercase mb-1">Memory in numbers</h4>
           <h2 class="text-[56px] mb-3.5">Growing every second</h2>
           <p class="text-[#424242]">Creativity never stops, and neither do we.</p>
-          <button
-            class="btn bg-black mx-auto mt-6 mb-2.5"
+          <a
+            ref="/register"
+            class="w-fit btn bg-black mx-auto mt-6 mb-2.5"
             style="color: #fff; font-size: 15px"
           >
-            Sign up for free
-          </button>
+            Sign in for free
+          </a>
         </div>
         <div class="flex gap-12 mt-24">
           <div class="flex flex-col gap-3 items-center text-[#15BCB2] text-center">
-            <h3 class="text-[64px] font-semibold">1B+</h3>
-            <h4 class="text-[20px] font-semibold">AI images created, and counting</h4>
-            <p class="text-[15px] text-[#424242]">
-              AI-powered generation happening in real-time like never before.
-            </p>
+            <h3 class="text-[64px] font-semibold">1K+</h3>
+            <h4 class="text-[20px] font-semibold">Images downloads, and favorites</h4>
+            <p class="text-[15px] text-[#424242]"></p>
           </div>
           <div class="flex flex-col gap-3 items-center text-[#EB644C] text-center">
-            <h3 class="text-[64px] font-semibold">64M+</h3>
+            <h3 class="text-[64px] font-semibold">64+</h3>
             <h4 class="text-[20px] font-semibold">Happy creatives</h4>
             <p class="text-[15px] text-[#424242]">
               Join a growing community of innovators shaping the future of creativity.
             </p>
           </div>
           <div class="flex flex-col gap-3 items-center text-[#336AEA] text-center">
-            <h3 class="text-[64px] font-semibold">247M+</h3>
+            <h3 class="text-[64px] font-semibold">247+</h3>
             <h4 class="text-[20px] font-semibold">Ready-to-use stock assets</h4>
             <p class="text-[15px] text-[#424242]">
               Icons, videos, audio, images, vectors, and more all ready for your next
@@ -645,7 +643,7 @@ onMounted(() => {
             </p>
           </div>
           <div class="flex flex-col gap-3 items-center text-[#B07CC6] text-center">
-            <h3 class="text-[64px] font-semibold">600K+</h3>
+            <h3 class="text-[64px] font-semibold">600+</h3>
             <h4 class="text-[20px] font-semibold">Subscribers</h4>
             <p class="text-[15px] text-[#424242]">
               Unlocking creativity with Premium features and limitless possibilities.
