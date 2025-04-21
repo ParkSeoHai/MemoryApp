@@ -135,7 +135,7 @@
   grid-column: span 2;
 }
 
-#home .home-inspired__item img ~ div {
+#home .home-inspired__item .item-preview ~ div {
     opacity: 0;
     background: rgba(0, 0, 0, 0);
     transition: opacity 0.1s linear;
@@ -145,11 +145,11 @@
     display: none;
 }
 
-#home .home-inspired__item img:hover ~ div {
+#home .home-inspired__item .item-preview:hover ~ div {
     opacity: 1;
     background: rgba(0, 0, 0, 0.4);
 }
 
-#home .home-inspired__item img:hover ~ div .home-inspired__text {
+#home .home-inspired__item .item-preview:hover ~ div .home-inspired__text {
     display: block;
 }

@@ -1,0 +1,20 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.vue';
+import UserDownload from '../../views/UserDownload.vue';
+import Footer from '../../components/Footer.vue';
+---
+
+<Layout>
+	<Header client:idle />
+	<main>
+		<UserDownload client:idle />
+	</main>
+	<Footer client:idle />
+</Layout>
+
+<style>
+	#header {
+		color: #424242;
+	}
+</style>

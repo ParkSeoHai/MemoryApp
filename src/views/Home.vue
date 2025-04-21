@@ -6,8 +6,11 @@ import "swiper/css";
 import "swiper/css/navigation";
 import axios from "axios";
 import { URL_API } from "../constant";
+import { handleErrorAPI } from "../utils";
 
 const url = URL_API;
+
+const user = ref();
 
 const categories = ref([]);
 const tags = ref([]);
@@ -16,6 +19,7 @@ const swiperContainer = ref(null);
 const swiperInstance = ref(null);
 const slides = ref([]);
 const favorites = ref([]);
+const resourcesNew = ref([]);
 
 const searchInput = ref("");
 
@@ -49,7 +53,7 @@ const getDataNav = async () => {
     if (res.data?.statusCode !== 200) console.error(res.data);
     return res.data?.data;
   } catch (error) {
-    console.log(error);
+    handleErrorAPI(error);
   }
 };
 
@@ -63,7 +67,7 @@ const getTopDownloadsByType = async (file_type) => {
     if (res.data?.statusCode !== 200) console.error(res.data);
     return res.data?.data;
   } catch (error) {
-    console.log(error);
+    handleErrorAPI(error);
   }
 };
 
@@ -77,7 +81,7 @@ const getTopFavorites = async (number, file_type = "") => {
     if (res.data?.statusCode !== 200) console.error(res.data);
     return res.data?.data;
   } catch (error) {
-    console.log(error);
+    handleErrorAPI(error);
   }
 };
 
@@ -88,7 +92,19 @@ const getTagsRandom = async (number) => {
     if (res.data?.statusCode !== 200) console.error(res.data);
     return res.data?.data;
   } catch (error) {
-    console.log(error);
+    handleErrorAPI(error);
+  }
+};
+
+const getResourcesNew = async (number) => {
+  try {
+    const res = await axios.post(`${url}/resource/new`, {
+      number,
+    });
+    if (res.data?.statusCode !== 200) console.error(res.data);
+    return res.data?.data;
+  } catch (error) {
+    handleErrorAPI(error);
   }
 };
 
@@ -106,10 +122,13 @@ const stopVideo = (event) => {
 };
 
 const init = async () => {
+  // get data user
+  user.value = JSON.parse(localStorage.getItem("user"));
   categories.value = await getDataNav();
   slides.value = await getTopDownloadsByType();
   tags.value = await getTagsRandom(5);
   favorites.value = await getTopFavorites(9);
+  resourcesNew.value = await getResourcesNew(12);
 };
 
 const handleSearch = () => {
@@ -277,7 +296,7 @@ onMounted(() => {
               <div class="swiper-wrapper">
                 <div class="swiper-slide" v-for="(slide, index) in slides" :key="index">
                   <a
-                    v-if="slide?.file_type === 'image'"
+                    v-if="slide?.file_type === 'image' || slide?.file_type === 'template'"
                     :href="`search?query=${slide?.tag_name}&detail_id=${slide?.id}`"
                     class="swiper-slide__link"
                   >
@@ -362,7 +381,7 @@ onMounted(() => {
       </div>
     </section>
 
-    <div class="container">
+    <div v-if="!user" class="container">
       <div class="flex items-center justify-center bg-[#f0f4fd] rounded-lg h-[84px]">
         <p class="text-[17px] font-semibold me-8">Sign up for 10 daily free downloads</p>
         <a
@@ -404,6 +423,7 @@ onMounted(() => {
             </a>
           </template>
         </div>
+        <!-- list favorites -->
         <div class="home-designers__product grid grid-cols-7 grid-rows-3 gap-7">
           <template v-for="favorite in favorites" :key="favorite.id">
             <template v-if="favorite.file_type === 'video'">
@@ -436,7 +456,11 @@ onMounted(() => {
                 ></div>
               </a>
             </template>
-            <template v-else-if="favorite.file_type === 'image'">
+            <template
+              v-else-if="
+                favorite.file_type === 'image' || favorite.file_type === 'template'
+              "
+            >
               <a
                 :href="`search?query=${favorite?.tag_name}&detail_id=${favorite?.id}`"
                 class="home-designers__product--item relative h-[220px] rounded-lg font-bold overflow-hidden"
@@ -468,7 +492,7 @@ onMounted(() => {
         </div>
       </div>
     </section>
-
+    <!-- list resoures news -->
     <section class="container" style="padding: 40px 0">
       <div>
         <h2 class="text-[56px] font-semibold text-center mb-3.5">Get inspired</h2>
@@ -476,133 +500,55 @@ onMounted(() => {
           Discover thousands of amazing images created by Memory’s artists
         </p>
         <div class="home-inspired grid grid-cols-4 gap-8 mt-8">
-          <div class="flex flex-col gap-8">
-            <a href="#" class="home-inspired__item relative overflow-hidden">
-              <img
-                class="rounded-md"
-                src="https://cdn-front.freepik.com/images/ai/image-generator/gallery/pikaso-woman.webp"
-              />
-              <div
-                class="absolute flex flex-col justify-end inset-0 pointer-events-none rounded-md p-3.5 text-white"
+          <div
+            v-for="itemNew in resourcesNew"
+            :key="itemNew.id"
+            class="flex flex-col gap-8"
+          >
+            <template v-if="itemNew.file_type === 'video'">
+              <a
+                :href="`search?query=${itemNew?.tag_name}&detail_id=${itemNew?.id}`"
+                class="home-inspired__item relative overflow-hidden"
               >
-                <p class="home-inspired__text">
-                  A young Asian woman in a long white dress in motion and an astronaut
-                  helmet, standing in a desert landscape with red sand dunes in the
-                  background
-                </p>
-              </div>
-            </a>
-            <a href="#" class="home-inspired__item relative overflow-hidden">
-              <img
-                class="rounded-md"
-                src="https://cdn-front.freepik.com/images/ai/image-generator/gallery/magnific-cat.webp"
-              />
-              <div
-                class="absolute flex flex-col justify-end inset-0 pointer-events-none rounded-md p-3.5 text-white"
+                <video
+                  class="item-preview h-full w-full object-cover"
+                  @mouseover="playVideo"
+                  @mouseleave="stopVideo"
+                >
+                  <source :src="itemNew.file_url" type="video/mp4" />
+                </video>
+                <div
+                  class="absolute flex flex-col justify-end inset-0 pointer-events-none rounded-md p-3.5 text-white"
+                >
+                  <p class="home-inspired__text">
+                    {{ itemNew.description }}
+                  </p>
+                </div>
+              </a>
+            </template>
+            <template
+              v-else-if="
+                itemNew.file_type === 'image' || itemNew.file_type === 'template'
+              "
+            >
+              <a
+                :href="`search?query=${itemNew?.tag_name}&detail_id=${itemNew?.id}`"
+                class="home-inspired__item relative overflow-hidden"
               >
-                <p class="home-inspired__text">
-                  A young Asian woman in a long white dress in motion and an astronaut
-                  helmet, standing in a desert landscape with red sand dunes in the
-                  background
-                </p>
-              </div>
-            </a>
-          </div>
-          <div class="flex flex-col gap-8">
-            <a href="#" class="home-inspired__item relative overflow-hidden">
-              <img
-                class="rounded-md"
-                src="https://cdn-front.freepik.com/images/ai/image-generator/gallery/magnific-cat.webp"
-              />
-              <div
-                class="absolute flex flex-col justify-end inset-0 pointer-events-none rounded-md p-3.5 text-white"
-              >
-                <p class="home-inspired__text">
-                  A young Asian woman in a long white dress in motion and an astronaut
-                  helmet, standing in a desert landscape with red sand dunes in the
-                  background
-                </p>
-              </div>
-            </a>
-            <a href="#" class="home-inspired__item relative overflow-hidden">
-              <img
-                class="rounded-md"
-                src="https://cdn-front.freepik.com/images/ai/image-generator/gallery/pikaso-woman.webp"
-              />
-              <div
-                class="absolute flex flex-col justify-end inset-0 pointer-events-none rounded-md p-3.5 text-white"
-              >
-                <p class="home-inspired__text">
-                  A young Asian woman in a long white dress in motion and an astronaut
-                  helmet, standing in a desert landscape with red sand dunes in the
-                  background
-                </p>
-              </div>
-            </a>
-          </div>
-          <div class="flex flex-col gap-8">
-            <a href="#" class="home-inspired__item relative overflow-hidden">
-              <img
-                class="rounded-md"
-                src="https://cdn-front.freepik.com/images/ai/image-generator/gallery/resource-tti-10.webp"
-              />
-              <div
-                class="absolute flex flex-col justify-end inset-0 pointer-events-none rounded-md p-3.5 text-white"
-              >
-                <p class="home-inspired__text">
-                  A young Asian woman in a long white dress in motion and an astronaut
-                  helmet, standing in a desert landscape with red sand dunes in the
-                  background
-                </p>
-              </div>
-            </a>
-            <a href="#" class="home-inspired__item relative overflow-hidden">
-              <img
-                class="rounded-md"
-                src="https://cdn-front.freepik.com/images/ai/image-generator/gallery/pikaso-woman.webp"
-              />
-              <div
-                class="absolute flex flex-col justify-end inset-0 pointer-events-none rounded-md p-3.5 text-white"
-              >
-                <p class="home-inspired__text">
-                  A young Asian woman in a long white dress in motion and an astronaut
-                  helmet, standing in a desert landscape with red sand dunes in the
-                  background
-                </p>
-              </div>
-            </a>
-          </div>
-          <div class="flex flex-col gap-8">
-            <a href="#" class="home-inspired__item relative overflow-hidden">
-              <img
-                class="rounded-md"
-                src="https://cdn-front.freepik.com/images/ai/image-generator/gallery/resource-tti-15.webp"
-              />
-              <div
-                class="absolute flex flex-col justify-end inset-0 pointer-events-none rounded-md p-3.5 text-white"
-              >
-                <p class="home-inspired__text">
-                  A young Asian woman in a long white dress in motion and an astronaut
-                  helmet, standing in a desert landscape with red sand dunes in the
-                  background
-                </p>
-              </div>
-            </a>
-            <a href="#" class="home-inspired__item relative overflow-hidden">
-              <img
-                class="rounded-md"
-                src="https://cdn-front.freepik.com/images/ai/image-generator/gallery/magnific-robot.webp"
-              />
-              <div
-                class="absolute flex flex-col justify-end inset-0 pointer-events-none rounded-md p-3.5 text-white"
-              >
-                <p class="home-inspired__text">
-                  A young Asian woman in a long white dress in motion and an astronaut
-                  helmet, standing in a desert landscape with red sand dunes in the
-                  background
-                </p>
-              </div>
-            </a>
+                <img
+                  class="item-preview rounded-md"
+                  :src="itemNew.file_url"
+                  :alt="itemNew.title"
+                />
+                <div
+                  class="absolute flex flex-col justify-end inset-0 pointer-events-none rounded-md p-3.5 text-white"
+                >
+                  <p class="home-inspired__text">
+                    {{ itemNew.description }}
+                  </p>
+                </div>
+              </a>
+            </template>
           </div>
         </div>
       </div>

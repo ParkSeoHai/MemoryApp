@@ -30,7 +30,8 @@
     height: 0;
 }
 
-#search .filter-detail .filter-detail__more li.active button {
+.filter-detail__selected li.active button,
+.filter-detail__more li.active button {
     color: #fff;
     background-color: #648eef;
 }
@@ -91,15 +92,15 @@
     grid-template-columns: repeat(4, 1fr);
 } */
 
-#search .filter-result__item .btn-actions {
+.filter-result__item .btn-actions {
     opacity: 0;
 }
 
-#search .filter-result__item:hover .bg-opacity {
+.filter-result__item:hover .bg-opacity {
     background: rgba(0, 0, 0, 0.4);
 }
 
-#search .filter-result__item:hover .btn-actions {
+.filter-result__item:hover .btn-actions {
     opacity: 1;
 }
 
