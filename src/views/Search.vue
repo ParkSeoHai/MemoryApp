@@ -8,9 +8,9 @@ import axios from "axios";
 import ResourceDetail from "./ResourceDetail.vue";
 import ModalAddCollection from "../components/ModalAddCollection.vue";
 import { URL_API } from "../constant";
+import { handleErrorAPI } from "../utils";
 
 const query = ref();
-const url = URL_API;
 
 const categories = ref([]);
 const slides = ref([]);
@@ -20,6 +20,11 @@ const pagination = ref();
 const page = ref(1);
 const categoryId = ref(null);
 const searchQuery = ref("");
+const file_type = ref("");
+const plan = ref("");
+const limit = ref();
+const resources = ref([]);
+const filterSelected = ref([]);
 
 const showDetail = ref(false);
 const dataDetail = ref({});
@@ -68,44 +73,70 @@ function splitIntoFourEqualParts(arr) {
 
 function handleClickType(category) {
   const { id, name } = category;
-  const url = new URL(window.location.href); // Lấy URL hiện tại
-  url.searchParams.set("categoryId", id);
-  url.searchParams.set("name", name);
-  url.searchParams.set("page", 1);
-  window.location.href = url;
+  const urlCurr = new URL(window.location.href); // Lấy URL hiện tại
+  urlCurr.searchParams.set("categoryId", id);
+  urlCurr.searchParams.set("name", name);
+  urlCurr.searchParams.set("page", 1);
+  window.location.href = urlCurr;
 }
+
+const handleClickPlan = (value) => {
+  const url = new URL(window.location.href); // Lấy URL hiện tại
+  url.searchParams.set("plan", value);
+  window.location.href = url;
+};
 
 const getRelatedTags = async () => {
   try {
-    const res = await axios.get(`${url}/tag/related/${query.value.query}/10`);
+    const res = await axios.get(`${URL_API}/tag/related/${query.value.query}/10`);
     if (res.data?.statusCode !== 200) console.error(res.data);
     return res.data?.data;
   } catch (error) {
-    console.log(error);
+    handleErrorAPI(error);
   }
 };
 
 const getResourceTags = async () => {
   try {
     const res = await axios.get(
-      `${url}/tag/resources/${query.value.query}?page=${page.value}&limit=15&categoryId=${categoryId.value}`
+      `${URL_API}/tag/resources/${query.value.query}?page=${page.value}&limit=15&categoryId=${categoryId.value}`
     );
     if (res.data?.statusCode !== 200) console.error(res.data);
     pagination.value = res.data?.pagination;
     return res.data?.data;
   } catch (error) {
-    console.log(error);
+    handleErrorAPI(error);
+  }
+};
+
+const searchResource = async () => {
+  try {
+    // keyword, file_type, plan, page, limit, categoryId
+    const res = await axios.post(`${URL_API}/resource/search`, {
+      keyword: query.value.query,
+      file_type: file_type.value,
+      plan: plan.value,
+      page: page.value,
+      limit: limit.value,
+      categoryId: categoryId.value,
+    });
+    console.log(res.data);
+    if (res.data?.statusCode !== 200) console.error(res.data);
+    pagination.value = res.data?.pagination;
+    return res.data?.data;
+  } catch (error) {
+    handleErrorAPI(error);
   }
 };
 
 // get data categories
 const getDataNav = async () => {
   try {
-    const res = await axios.get(`${url}/category/data-navbar`);
+    const res = await axios.get(`${URL_API}/category/data-navbar`);
     if (res.data?.statusCode !== 200) console.error(res.data);
     return res.data?.data;
   } catch (error) {
-    console.log(error);
+    handleErrorAPI(error);
   }
 };
 
@@ -115,24 +146,75 @@ const handlePage = (value) => {
   window.location.href = url;
 };
 
+const getDetail = async (id) => {
+  const dataDetail = resources.value.find(
+    (item) => item.id == Number(query.value.detail_id)
+  );
+  if (dataDetail) {
+    handleShowDetail(dataDetail);
+  } else {
+    // search detail
+    try {
+      const res = await axios.get(`${URL_API}/resource/${id}`);
+      if (res.data?.statusCode !== 200) console.error(res.data);
+      handleShowDetail(res.data?.data);
+    } catch (error) {
+      handleErrorAPI(error);
+    }
+  }
+};
+
+const getFilterSelected = () => {
+  const urlCurr = new URL(window.location.href); // Lấy URL hiện tại
+  const categoryId = urlCurr.searchParams.get("categoryId");
+  const plan = urlCurr.searchParams.get("plan");
+  const category = categories.value.find((item) => item.id == Number(categoryId));
+  if (category) {
+    filterSelected.value.push({
+      id: categoryId,
+      name: category.name,
+      type: "category",
+    });
+  }
+  if (plan) {
+    filterSelected.value.push({
+      id: plan,
+      name: plan,
+      type: "plan",
+    });
+  }
+};
+
+const handleRemoveFilter = (item) => {
+  const url = new URL(window.location.href); // Lấy URL hiện tại
+  if (item.type === "category") {
+    url.searchParams.delete("categoryId");
+  }
+  if (item.type === "plan") {
+    url.searchParams.delete("plan");
+  }
+  window.location.href = url;
+};
+
 const init = async () => {
   query.value = getQueryParamsFromCurrentUrl();
   slides.value = await getRelatedTags();
   categories.value = await getDataNav();
   page.value = Number(query.value.page) || 1;
   categoryId.value = Number(query.value?.categoryId) || null;
-  const resources = await getResourceTags();
+  searchQuery.value = query.value.query || "";
+  file_type.value = query.value.file_type || "";
+  plan.value = query.value.plan || "";
+  limit.value = Number(query.value.limit) || 25;
+  getFilterSelected();
+  // const resources = await getResourceTags();
+  resources.value = await searchResource();
   // tách thành 4 mảng result
-  results.value = splitIntoFourEqualParts(resources || []);
+  results.value = splitIntoFourEqualParts(resources.value || []);
   // show detail
   if (query.value?.detail_id) {
-    const dataDetail = resources.find((item) => item.id == query.value.detail_id);
-    if (dataDetail) {
-      handleShowDetail(dataDetail);
-    }
-    console.log(dataDetail);
+    await getDetail(query.value.detail_id);
   }
-  console.log(query.value);
 };
 
 const handleCloseModal = () => {
@@ -203,6 +285,7 @@ onMounted(async () => {
           style="flex: 1"
           placeholder="Search all assets"
           v-model="searchQuery"
+          @keyup.enter="handleSearch"
         />
         <div class="group-actions flex items-center gap-3">
           <button class="btn" style="padding: 10px; border: none; display: none">
@@ -263,7 +346,7 @@ onMounted(async () => {
           style="border-bottom: 1px solid #e5e5e5"
         >
           <div
-            class="filter_left py-3 w-[270px] flex items-center justify-between font-semibold"
+            class="filter_left py-3 w-[240px] flex items-center justify-between font-semibold"
             style="border-right: 1px solid #e5e5e5"
           >
             <div class="flex items-center gap-3">
@@ -372,11 +455,41 @@ onMounted(async () => {
             </div>
           </div>
         </div>
-        <div class="filter-detail w-[270px]">
+        <div class="filter-detail w-[240px]">
           <div
             class="sticky z-10 top-[120px] overflow-y-auto"
             style="height: calc(100vh - 120px); border-right: 1px solid #e5e5e5"
           >
+            <!-- selected -->
+            <div v-if="filterSelected.length > 0" class="filter-detail__selected">
+              <ul class="flex flex-wrap gap-3 pt-2 pb-6 font-normal">
+                <li v-for="select in filterSelected" :key="select?.id" class="active">
+                  <button
+                    @click.prevent="handleRemoveFilter(select)"
+                    class="btn"
+                    style="font-weight: 400"
+                    title="Remove"
+                  >
+                    {{ select.name }}
+                    <span class="icon px-2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="-49 141 512 512"
+                        width="12"
+                        height="12"
+                        fill="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="m242.355 397 127.987-127.987c9.763-9.763 9.763-25.592 0-35.355s-25.592-9.763-35.355 0L207 361.644 79.013 233.658c-9.764-9.763-25.592-9.763-35.355 0s-9.763 25.592 0 35.355l127.986 127.986L43.658 524.986c-9.763 9.763-9.763 25.592 0 35.355s25.592 9.763 35.355 0l127.986-127.986 127.987 127.987c9.764 9.763 25.592 9.763 35.355 0s9.763-25.592 0-35.355z"
+                        ></path>
+                      </svg>
+                    </span>
+                  </button>
+                </li>
+              </ul>
+            </div>
+
             <div class="pe-5">
               <button
                 type="button"
@@ -418,6 +531,7 @@ onMounted(async () => {
                       @click.prevent="handleClickType(category)"
                       class="btn"
                       style="font-weight: 400"
+                      :disabled="category?.id == categoryId"
                     >
                       {{ category.name }}
                     </button>
@@ -458,10 +572,22 @@ onMounted(async () => {
               <div class="filter-detail__more">
                 <ul class="flex flex-wrap gap-3 pt-2 pb-6 font-normal">
                   <li>
-                    <a href="#" class="btn" style="font-weight: 400">Free</a>
+                    <button
+                      class="btn"
+                      style="font-weight: 400"
+                      @click.prevent="handleClickPlan('free')"
+                    >
+                      Free
+                    </button>
                   </li>
                   <li>
-                    <a href="#" class="btn" style="font-weight: 400">Premium</a>
+                    <button
+                      class="btn"
+                      style="font-weight: 400"
+                      @click.prevent="handleClickPlan('premium')"
+                    >
+                      Premium
+                    </button>
                   </li>
                 </ul>
               </div>
@@ -592,11 +718,7 @@ onMounted(async () => {
                     >
                       <source :src="item.file_url" type="video/mp4" />
                     </video>
-                    <img
-                      v-else-if="item?.file_type === 'image'"
-                      :src="item?.file_url"
-                      :alt="item?.title"
-                    />
+                    <img v-else :src="item?.file_url" :alt="item?.title" />
                   </div>
                   <div class="absolute bg-opacity pointer-events-none inset-0"></div>
                   <div
@@ -688,11 +810,7 @@ onMounted(async () => {
                     >
                       <source :src="item.file_url" type="video/mp4" />
                     </video>
-                    <img
-                      v-else-if="item?.file_type === 'image'"
-                      :src="item?.file_url"
-                      :alt="item?.title"
-                    />
+                    <img v-else :src="item?.file_url" :alt="item?.title" />
                   </div>
                   <div class="absolute bg-opacity pointer-events-none inset-0"></div>
                   <div
@@ -784,7 +902,9 @@ onMounted(async () => {
                       <source :src="item.file_url" type="video/mp4" />
                     </video>
                     <img
-                      v-else-if="item?.file_type === 'image'"
+                      v-else-if="
+                        item?.file_type === 'image' || item?.file_type === 'template'
+                      "
                       :src="item?.file_url"
                       :alt="item?.title"
                     />
@@ -879,7 +999,9 @@ onMounted(async () => {
                       <source :src="item.file_url" type="video/mp4" />
                     </video>
                     <img
-                      v-else-if="item?.file_type === 'image'"
+                      v-else-if="
+                        item?.file_type === 'image' || item?.file_type === 'template'
+                      "
                       :src="item?.file_url"
                       :alt="item?.title"
                     />

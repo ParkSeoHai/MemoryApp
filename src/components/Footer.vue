@@ -1,4 +1,12 @@
-<script setup></script>
+<script setup>
+import { ref, onMounted } from "vue";
+
+const user = ref();
+
+onMounted(() => {
+  user.value = localStorage.getItem("user");
+});
+</script>
 
 <template>
   <footer id="footer">
@@ -57,6 +65,7 @@
               Get exclusive assets sent straight to your inbox
             </p>
             <a
+              v-if="!user"
               href="/register"
               class="w-fit btn bg-[#336aea] mt-3"
               style="color: #fff; border: none; font-size: 15px; padding: 10px 25px"

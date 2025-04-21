@@ -1,6 +1,7 @@
 <script setup>
-import axios from "axios";
 import { ref, onMounted, toRef } from "vue";
+import { URL_API } from "../constant";
+import api, { handleErrorAPI } from "../utils";
 
 const props = defineProps(["data"]);
 const emit = defineEmits(["closeModal", "showModalCollection"]);
@@ -12,6 +13,8 @@ const keywordList = ref(null);
 const keywordMarginLeft = ref(0);
 const maxScrollWidth = ref(0);
 const scrollStep = 200;
+const author = ref();
+const resourcesTags = ref([]);
 
 const showMoreDownload = ref(false);
 
@@ -26,6 +29,27 @@ const sizeVideoFiles = ref({
   mp4: "",
   webm: "",
 });
+
+const getInfoAuthor = async (authorId) => {
+  try {
+    const response = await api.get(`${URL_API}/user/${authorId}`);
+    author.value = response.data.data;
+  } catch (error) {
+    handleErrorAPI(error);
+  }
+};
+
+const getResourceByTags = async (tags) => {
+  try {
+    const response = await api.post(`${URL_API}/resource/tags`, {
+      tags,
+    });
+    if (response.data?.statusCode !== 200) console.error(response.data);
+    resourcesTags.value = response.data.data;
+  } catch (error) {
+    handleErrorAPI(error);
+  }
+};
 
 const scrollLeftKeyword = () => {
   if (keywordList.value) {
@@ -87,36 +111,52 @@ async function getFormattedFileSizeAfterFormatChange(url, format) {
   return formattedSize;
 }
 
-async function downloadFileAsFormat(cloudinaryUrl, format) {
-  let newUrl = cloudinaryUrl;
-  let filename = cloudinaryUrl.split("/").pop();
-  // Nếu format được cung cấp, thay đổi URL
-  if (format) {
-    // Tách phần base và tên file
-    const parts = cloudinaryUrl.split("/");
-    const publicId = parts.pop().split(".")[0];
-    const baseUrl = parts.join("/");
-    newUrl = `${baseUrl}/${publicId}.${format}`;
-    filename = `${publicId}.${format}`;
+async function downloadFileAsFormat(id, fileName, typeFile, format) {
+  try {
+    const response = await api.get(`${URL_API}/resource/download/${id}`, {
+      responseType: "blob",
+      params: {
+        fileName,
+        typeFile,
+        format,
+      },
+    });
+    const disposition = response.headers["content-disposition"];
+    if (disposition) {
+      const fileNameMatch = disposition.match(/filename\*?=(?:UTF-8'')?"?([^;"\n]+)/);
+      if (fileNameMatch && fileNameMatch[1]) {
+        fileName = decodeURIComponent(fileNameMatch[1]);
+      }
+    }
+    const blobUrl = window.URL.createObjectURL(response.data);
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.setAttribute("download", fileName);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(blobUrl);
+  } catch (error) {
+    handleErrorAPI(error);
   }
-
-  const response = await fetch(newUrl);
-  const blob = await response.blob();
-  const blobUrl = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = blobUrl;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(blobUrl);
 }
 
 const handleDownload = (format) => {
-  downloadFileAsFormat(dataItem.value.file_url, format);
+  const fileName = dataItem.value?.title;
+  downloadFileAsFormat(dataItem.value.id, fileName, null, format);
+};
+
+const init = async () => {
+  const url = new URL(window.location.href); // Lấy URL hiện tại
+  // get data
+  await getInfoAuthor(dataItem.value?.user_id);
+  const tags = slidesKeyword.value.map((item) => item.title);
+  tags.push(dataItem.value?.name);
+  await getResourceByTags(tags);
 };
 
 onMounted(async () => {
+  await init();
   if (keywordList.value) {
     maxScrollWidth.value = keywordList.value.scrollWidth - keywordList.value.offsetWidth;
   }
@@ -135,9 +175,6 @@ onMounted(async () => {
       );
     }
   }
-  console.log("sizeFiles", sizeImgFiles.value);
-  console.log("sizeVideoFiles", sizeVideoFiles.value);
-  console.log("props.detail", dataItem.value);
 });
 </script>
 
@@ -164,21 +201,26 @@ onMounted(async () => {
           <!-- header -->
           <div class="flex items-center bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
             <div class="flex items-start">
-              <a href="#" class="rounded-full overflow-hidden">
-                <img
-                  src="https://lh3.googleusercontent.com/a-/ACNPEu8ymGzpFMHD8Sy3cOFGWzLe1RMUjWDjYRtZk4XO=s96-c"
-                  class="w-[44px]"
-                />
-              </a>
-              <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                <h3
-                  class="text-base font-semibold text-gray-900 cursor-pointer hover:text-[#336aea]"
-                  id="modal-title"
-                >
-                  <a href="">CreativeDesign99</a>
-                </h3>
-                <p class="text-sm text-gray-500 hover:underline cursor-pointer">Follow</p>
-              </div>
+              <template v-if="author">
+                <a href="#" class="block rounded-full overflow-hidden">
+                  <img
+                    :src="author?.avatar"
+                    :alt="author?.name"
+                    class="w-[44px] h-[44px]"
+                  />
+                </a>
+                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                  <h3
+                    class="text-base font-semibold text-gray-900 cursor-pointer hover:text-[#336aea]"
+                    id="modal-title"
+                  >
+                    <a :href="`/user/${author?.id}`">{{ author?.name }}</a>
+                  </h3>
+                  <p class="text-sm text-gray-500 hover:underline cursor-pointer">
+                    Follow
+                  </p>
+                </div>
+              </template>
             </div>
             <div class="ms-auto">
               <div class="flex items-center btn-download text-[#fff]">
@@ -247,7 +289,7 @@ onMounted(async () => {
           </div>
           <!-- body -->
           <div class="px-4 pt-2 pb-4 sm:px-6 sm:pb-4">
-            <div class="flex gap-6">
+            <div class="flex gap-6 max-h-[550px]">
               <div class="w-[30%] p-4 border border-[#f0f0f0] rounded-lg hidden">
                 <p class="font-bold mb-4">AI Tools</p>
                 <div class="grid grid-cols-2 gap-4">
@@ -284,16 +326,10 @@ onMounted(async () => {
               <div
                 class="border border-[#f0f0f0] rounded-lg overflow-hidden w-full px-30 py-8"
               >
-                <div class="flex justify-center">
+                <div class="flex justify-center h-full">
                   <div class="preview relative w-fit">
-                    <img
-                      v-if="dataItem?.file_type == 'image'"
-                      :src="dataItem?.file_url"
-                      :alt="dataItem?.title"
-                      class="rounded-lg"
-                    />
                     <video
-                      v-else-if="dataItem?.file_type == 'video'"
+                      v-if="dataItem?.file_type == 'video'"
                       width="1280"
                       height="720"
                       controls=""
@@ -301,9 +337,16 @@ onMounted(async () => {
                       playsinline=""
                       autoplay=""
                       loop=""
+                      class="h-full"
                     >
                       <source :src="dataItem?.file_url" type="video/mp4" />
                     </video>
+                    <img
+                      v-else
+                      :src="dataItem?.file_url"
+                      :alt="dataItem?.title"
+                      class="rounded-lg h-full"
+                    />
                     <div
                       v-if="dataItem?.file_type == 'image'"
                       class="absolute btn-actions w-fit top-0 right-0 flex flex-col h-full rounded-md py-3.5 pe-3.5 text-white"
@@ -428,436 +471,33 @@ onMounted(async () => {
             </div>
             <!-- list resources -->
             <div class="mt-4">
-              <div class="filter-result__product gap-4">
+              <div class="filter-result__product flex flex-wrap gap-4">
                 <!-- item -->
-                <div class="flex gap-6">
+                <div
+                  v-for="resourceTag in resourcesTags"
+                  :key="resourceTag?.id"
+                  class="flex gap-6"
+                >
                   <div
+                    v-if="resourceTag?.id != dataItem?.id"
                     class="filter-result__item relative rounded-lg overflow-hidden h-[180px]"
                   >
-                    <a href="#">
+                    <a
+                      :href="`/search?query=${resourceTag?.tag_name}&detail_id=${resourceTag?.id}`"
+                    >
                       <video
-                        v-if="true"
+                        v-if="resourceTag?.file_type == 'video'"
                         class="h-full w-full object-cover"
                         @mouseover="playVideo"
                         @mouseleave="stopVideo"
                       >
-                        <source
-                          src="https://videocdn.cdnpk.net/videos/b16e39f2-c8c9-46e3-8cbb-ac0cd337b066/horizontal/previews/watermarked/small.mp4"
-                          type="video/mp4"
-                        />
+                        <source :src="resourceTag?.file_url" type="video/mp4" />
                       </video>
                       <img
                         v-else
-                        src="https://img.freepik.com/free-vector/happy-easter-day-event-bunnies-eggs_23-2148462653.jpg?t=st=1744203931~exp=1744207531~hmac=313d8d234eb970360e4a1613ffa7eaefce8ebadf7845c4580293c83a40d15014&w=740"
+                        :src="resourceTag?.file_url"
                         :alt="item?.title"
-                      />
-                    </a>
-                    <div class="absolute bg-opacity pointer-events-none inset-0"></div>
-                    <div
-                      class="absolute btn-actions w-fit top-0 right-0 flex flex-col h-full rounded-md py-3.5 pe-3.5 text-white"
-                    >
-                      <div
-                        class="flex flex-col items-end flex-wrap z-50 ms-auto h-full gap-1.5"
-                      >
-                        <button
-                          class="btn justify-center bg-white w-[35px] h-[35px]"
-                          style="color: #333; padding: 4px"
-                          title="Download"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            class="bi bi-download"
-                            viewBox="0 0 16 16"
-                          >
-                            <path
-                              d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"
-                            />
-                            <path
-                              d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- item -->
-                <div class="flex gap-6">
-                  <div
-                    class="filter-result__item relative rounded-lg overflow-hidden h-[180px]"
-                  >
-                    <a href="#">
-                      <!-- <video
-                        v-if="item?.file_type === 'video'"
                         class="h-full w-full object-cover"
-                        @mouseover="playVideo"
-                        @mouseleave="stopVideo"
-                      >
-                        <source :src="item.file_url" type="video/mp4" />
-                      </video> -->
-                      <img
-                        src="https://img.freepik.com/free-vector/happy-easter-day-event-bunnies-eggs_23-2148462653.jpg?t=st=1744203931~exp=1744207531~hmac=313d8d234eb970360e4a1613ffa7eaefce8ebadf7845c4580293c83a40d15014&w=740"
-                        :alt="item?.title"
-                      />
-                    </a>
-                    <div class="absolute bg-opacity pointer-events-none inset-0"></div>
-                    <div
-                      class="absolute btn-actions w-fit top-0 right-0 flex flex-col h-full rounded-md py-3.5 pe-3.5 text-white"
-                    >
-                      <div
-                        class="flex flex-col items-end flex-wrap z-50 ms-auto h-full gap-1.5"
-                      >
-                        <button
-                          class="btn justify-center bg-white w-[35px] h-[35px]"
-                          style="color: #333; padding: 4px"
-                          title="Download"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            class="bi bi-download"
-                            viewBox="0 0 16 16"
-                          >
-                            <path
-                              d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"
-                            />
-                            <path
-                              d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- item -->
-                <div class="flex gap-6">
-                  <div
-                    class="filter-result__item relative rounded-lg overflow-hidden h-[180px]"
-                  >
-                    <a href="#">
-                      <!-- <video
-                        v-if="item?.file_type === 'video'"
-                        class="h-full w-full object-cover"
-                        @mouseover="playVideo"
-                        @mouseleave="stopVideo"
-                      >
-                        <source :src="item.file_url" type="video/mp4" />
-                      </video> -->
-                      <img
-                        src="https://img.freepik.com/free-vector/happy-easter-day-event-bunnies-eggs_23-2148462653.jpg?t=st=1744203931~exp=1744207531~hmac=313d8d234eb970360e4a1613ffa7eaefce8ebadf7845c4580293c83a40d15014&w=740"
-                        :alt="item?.title"
-                      />
-                    </a>
-                    <div class="absolute bg-opacity pointer-events-none inset-0"></div>
-                    <div
-                      class="absolute btn-actions w-fit top-0 right-0 flex flex-col h-full rounded-md py-3.5 pe-3.5 text-white"
-                    >
-                      <div
-                        class="flex flex-col items-end flex-wrap z-50 ms-auto h-full gap-1.5"
-                      >
-                        <button
-                          class="btn justify-center bg-white w-[35px] h-[35px]"
-                          style="color: #333; padding: 4px"
-                          title="Download"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            class="bi bi-download"
-                            viewBox="0 0 16 16"
-                          >
-                            <path
-                              d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"
-                            />
-                            <path
-                              d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- item -->
-                <div class="flex gap-6">
-                  <div
-                    class="filter-result__item relative rounded-lg overflow-hidden h-[180px]"
-                  >
-                    <a href="#">
-                      <!-- <video
-                        v-if="item?.file_type === 'video'"
-                        class="h-full w-full object-cover"
-                        @mouseover="playVideo"
-                        @mouseleave="stopVideo"
-                      >
-                        <source :src="item.file_url" type="video/mp4" />
-                      </video> -->
-                      <img
-                        src="https://img.freepik.com/free-vector/happy-easter-day-event-bunnies-eggs_23-2148462653.jpg?t=st=1744203931~exp=1744207531~hmac=313d8d234eb970360e4a1613ffa7eaefce8ebadf7845c4580293c83a40d15014&w=740"
-                        :alt="item?.title"
-                      />
-                    </a>
-                    <div class="absolute bg-opacity pointer-events-none inset-0"></div>
-                    <div
-                      class="absolute btn-actions w-fit top-0 right-0 flex flex-col h-full rounded-md py-3.5 pe-3.5 text-white"
-                    >
-                      <div
-                        class="flex flex-col items-end flex-wrap z-50 ms-auto h-full gap-1.5"
-                      >
-                        <button
-                          class="btn justify-center bg-white w-[35px] h-[35px]"
-                          style="color: #333; padding: 4px"
-                          title="Download"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            class="bi bi-download"
-                            viewBox="0 0 16 16"
-                          >
-                            <path
-                              d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"
-                            />
-                            <path
-                              d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- item -->
-                <div class="flex gap-6">
-                  <div
-                    class="filter-result__item relative rounded-lg overflow-hidden h-[180px]"
-                  >
-                    <a href="#">
-                      <!-- <video
-                        v-if="item?.file_type === 'video'"
-                        class="h-full w-full object-cover"
-                        @mouseover="playVideo"
-                        @mouseleave="stopVideo"
-                      >
-                        <source :src="item.file_url" type="video/mp4" />
-                      </video> -->
-                      <img
-                        src="https://img.freepik.com/free-vector/happy-easter-day-event-bunnies-eggs_23-2148462653.jpg?t=st=1744203931~exp=1744207531~hmac=313d8d234eb970360e4a1613ffa7eaefce8ebadf7845c4580293c83a40d15014&w=740"
-                        :alt="item?.title"
-                      />
-                    </a>
-                    <div class="absolute bg-opacity pointer-events-none inset-0"></div>
-                    <div
-                      class="absolute btn-actions w-fit top-0 right-0 flex flex-col h-full rounded-md py-3.5 pe-3.5 text-white"
-                    >
-                      <div
-                        class="flex flex-col items-end flex-wrap z-50 ms-auto h-full gap-1.5"
-                      >
-                        <button
-                          class="btn justify-center bg-white w-[35px] h-[35px]"
-                          style="color: #333; padding: 4px"
-                          title="Download"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            class="bi bi-download"
-                            viewBox="0 0 16 16"
-                          >
-                            <path
-                              d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"
-                            />
-                            <path
-                              d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- item -->
-                <div class="flex gap-6">
-                  <div
-                    class="filter-result__item relative rounded-lg overflow-hidden h-[180px]"
-                  >
-                    <a href="#">
-                      <!-- <video
-                        v-if="item?.file_type === 'video'"
-                        class="h-full w-full object-cover"
-                        @mouseover="playVideo"
-                        @mouseleave="stopVideo"
-                      >
-                        <source :src="item.file_url" type="video/mp4" />
-                      </video> -->
-                      <img
-                        src="https://img.freepik.com/free-vector/happy-easter-day-event-bunnies-eggs_23-2148462653.jpg?t=st=1744203931~exp=1744207531~hmac=313d8d234eb970360e4a1613ffa7eaefce8ebadf7845c4580293c83a40d15014&w=740"
-                        :alt="item?.title"
-                      />
-                    </a>
-                    <div class="absolute bg-opacity pointer-events-none inset-0"></div>
-                    <div
-                      class="absolute btn-actions w-fit top-0 right-0 flex flex-col h-full rounded-md py-3.5 pe-3.5 text-white"
-                    >
-                      <div
-                        class="flex flex-col items-end flex-wrap z-50 ms-auto h-full gap-1.5"
-                      >
-                        <button
-                          class="btn justify-center bg-white w-[35px] h-[35px]"
-                          style="color: #333; padding: 4px"
-                          title="Download"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            class="bi bi-download"
-                            viewBox="0 0 16 16"
-                          >
-                            <path
-                              d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"
-                            />
-                            <path
-                              d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- item -->
-                <div class="flex gap-6">
-                  <div
-                    class="filter-result__item relative rounded-lg overflow-hidden h-[180px]"
-                  >
-                    <a href="#">
-                      <!-- <video
-                        v-if="item?.file_type === 'video'"
-                        class="h-full w-full object-cover"
-                        @mouseover="playVideo"
-                        @mouseleave="stopVideo"
-                      >
-                        <source :src="item.file_url" type="video/mp4" />
-                      </video> -->
-                      <img
-                        src="https://img.freepik.com/free-vector/happy-easter-day-event-bunnies-eggs_23-2148462653.jpg?t=st=1744203931~exp=1744207531~hmac=313d8d234eb970360e4a1613ffa7eaefce8ebadf7845c4580293c83a40d15014&w=740"
-                        :alt="item?.title"
-                      />
-                    </a>
-                    <div class="absolute bg-opacity pointer-events-none inset-0"></div>
-                    <div
-                      class="absolute btn-actions w-fit top-0 right-0 flex flex-col h-full rounded-md py-3.5 pe-3.5 text-white"
-                    >
-                      <div
-                        class="flex flex-col items-end flex-wrap z-50 ms-auto h-full gap-1.5"
-                      >
-                        <button
-                          class="btn justify-center bg-white w-[35px] h-[35px]"
-                          style="color: #333; padding: 4px"
-                          title="Download"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            class="bi bi-download"
-                            viewBox="0 0 16 16"
-                          >
-                            <path
-                              d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"
-                            />
-                            <path
-                              d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- item -->
-                <div class="flex gap-6">
-                  <div
-                    class="filter-result__item relative rounded-lg overflow-hidden h-[180px]"
-                  >
-                    <a href="#">
-                      <!-- <video
-                        v-if="item?.file_type === 'video'"
-                        class="h-full w-full object-cover"
-                        @mouseover="playVideo"
-                        @mouseleave="stopVideo"
-                      >
-                        <source :src="item.file_url" type="video/mp4" />
-                      </video> -->
-                      <img
-                        src="https://img.freepik.com/free-vector/happy-easter-day-event-bunnies-eggs_23-2148462653.jpg?t=st=1744203931~exp=1744207531~hmac=313d8d234eb970360e4a1613ffa7eaefce8ebadf7845c4580293c83a40d15014&w=740"
-                        :alt="item?.title"
-                      />
-                    </a>
-                    <div class="absolute bg-opacity pointer-events-none inset-0"></div>
-                    <div
-                      class="absolute btn-actions w-fit top-0 right-0 flex flex-col h-full rounded-md py-3.5 pe-3.5 text-white"
-                    >
-                      <div
-                        class="flex flex-col items-end flex-wrap z-50 ms-auto h-full gap-1.5"
-                      >
-                        <button
-                          class="btn justify-center bg-white w-[35px] h-[35px]"
-                          style="color: #333; padding: 4px"
-                          title="Download"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            class="bi bi-download"
-                            viewBox="0 0 16 16"
-                          >
-                            <path
-                              d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"
-                            />
-                            <path
-                              d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- item -->
-                <div class="flex gap-6">
-                  <div
-                    class="filter-result__item relative rounded-lg overflow-hidden h-[180px]"
-                  >
-                    <a href="#">
-                      <!-- <video
-                        v-if="item?.file_type === 'video'"
-                        class="h-full w-full object-cover"
-                        @mouseover="playVideo"
-                        @mouseleave="stopVideo"
-                      >
-                        <source :src="item.file_url" type="video/mp4" />
-                      </video> -->
-                      <img
-                        src="https://img.freepik.com/free-vector/happy-easter-day-event-bunnies-eggs_23-2148462653.jpg?t=st=1744203931~exp=1744207531~hmac=313d8d234eb970360e4a1613ffa7eaefce8ebadf7845c4580293c83a40d15014&w=740"
-                        :alt="item?.title"
                       />
                     </a>
                     <div class="absolute bg-opacity pointer-events-none inset-0"></div>
