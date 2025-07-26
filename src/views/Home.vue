@@ -123,7 +123,12 @@ const stopVideo = (event) => {
 
 const init = async () => {
   // get data user
-  user.value = JSON.parse(localStorage.getItem("user"));
+  const userLocal = localStorage.getItem("user");
+  if (userLocal && userLocal !== "undefined") {
+    user.value = JSON.parse(userLocal);
+  } else {
+    user.value = null;
+  }
   categories.value = await getDataNav();
   slides.value = await getTopDownloadsByType();
   tags.value = await getTagsRandom(5);

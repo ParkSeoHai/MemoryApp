@@ -23,7 +23,12 @@ const getDataNav = async () => {
 
 const init = async () => {
   categories.value = await getDataNav();
-  user.value = JSON.parse(localStorage.getItem("user"));
+  const userLocal = localStorage.getItem("user");
+  if (userLocal && userLocal !== "undefined") {
+    user.value = JSON.parse(userLocal);
+  } else {
+    user.value = null;
+  }
   console.log(user.value);
 };
 
