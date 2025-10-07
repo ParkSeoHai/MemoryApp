@@ -2,10 +2,12 @@
 import { ref, onMounted, toRef } from "vue";
 import { URL_API } from "../constant";
 import api, { handleErrorAPI } from "../utils";
+import { toast } from "vue3-toastify";
 
 const props = defineProps(["data"]);
 const emit = defineEmits(["closeModal", "showModalCollection"]);
 
+const user = ref(null);
 const dataItem = toRef(props.data?.item);
 const slidesKeyword = toRef(props.data?.slides);
 
@@ -146,8 +148,43 @@ const handleDownload = (format) => {
   downloadFileAsFormat(dataItem.value.id, fileName, null, format);
 };
 
+const handleAddResourceToFavorite = async (item) => {
+  try {
+    const response = await api.post(`${URL_API}/favorite`, {
+      resourceId: item.id,
+    });
+    if (response.data?.statusCode === 200) {
+      toast.success(
+        response.data?.message || "Thêm tài nguyên vào yêu thích thành công."
+      );
+      dataItem.value.is_favorite = 1;
+    } else {
+      throw new Error("Có lỗi xảy ra trong quá trình thêm tài nguyên vào yêu thích.");
+    }
+  } catch (error) {
+    handleErrorAPI(error);
+  }
+};
+
+const handleRemoveResourceFavorite = async (item) => {
+  try {
+    const response = await api.delete(`${URL_API}/favorite/${item.id}`);
+    if (response.data?.statusCode === 200) {
+      toast.success(
+        response.data?.message || "Xóa tài nguyên khỏi yêu thích thành công."
+      );
+      dataItem.value.is_favorite = 0;
+    } else {
+      throw new Error("Có lỗi xảy ra trong quá trình xóa tài nguyên khỏi yêu thích.");
+    }
+  } catch (error) {
+    handleErrorAPI(error);
+  }
+};
+
 const init = async () => {
   const url = new URL(window.location.href); // Lấy URL hiện tại
+  user.value = JSON.parse(localStorage.getItem("user"));
   // get data
   await getInfoAuthor(dataItem.value?.user_id);
   const tags = slidesKeyword.value.map((item) => item.title);
@@ -374,11 +411,35 @@ onMounted(async () => {
                             <path
                               d="M13.5 9a.5.5 0 0 1 .5.5V11h1.5a.5.5 0 1 1 0 1H14v1.5a.5.5 0 1 1-1 0V12h-1.5a.5.5 0 0 1 0-1H13V9.5a.5.5 0 0 1 .5-.5"
                             ></path>
-                          </svg></button
-                        ><button
+                          </svg>
+                        </button>
+                        <button
+                          v-if="dataItem?.is_favorite == 1"
                           class="btn justify-center bg-white w-[35px] h-[35px]"
                           style="color: #333; padding: 4px"
                           title="Like"
+                          @click.stop="handleRemoveResourceFavorite(dataItem)"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="#dc3545"
+                            class="bi bi-heart-fill"
+                            viewBox="0 0 16 16"
+                          >
+                            <path
+                              fill-rule="evenodd"
+                              d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"
+                            />
+                          </svg>
+                        </button>
+                        <button
+                          v-else
+                          class="btn justify-center bg-white w-[35px] h-[35px]"
+                          style="color: #333; padding: 4px"
+                          title="Like"
+                          @click.stop="handleAddResourceToFavorite(dataItem)"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"

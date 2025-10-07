@@ -313,7 +313,7 @@ onMounted(() => {
                   </a>
                   <a
                     v-else-if="slide?.file_type === 'video'"
-                    href="#"
+                    :href="`search?query=${slide?.tag_name}&detail_id=${slide?.id}`"
                     class="swiper-slide__link"
                   >
                     <video
@@ -375,11 +375,17 @@ onMounted(() => {
           <a
             v-for="category in categories"
             :key="category.id"
-            href="#"
+            :href="
+              '/category?menu=' +
+              category.id +
+              '&from_element=mainmenu' +
+              '&name=' +
+              category.name
+            "
             class="flex flex-col items-center justify-center gap-2 font-semibold bg-[#f7f7f7] rounded-lg h-[112px] hover:scale-105"
             style="transition: scale 0.3s linear"
           >
-            <img :src="category.img" class="w-[18px] h-[18px]" />
+            <img :src="category.img" class="w-[30px] h-[30px]" />
             <span>{{ category.name }}</span>
           </a>
         </div>
@@ -566,7 +572,8 @@ onMounted(() => {
           <h2 class="text-[56px] mb-3.5">Growing every second</h2>
           <p class="text-[#424242]">Creativity never stops, and neither do we.</p>
           <a
-            ref="/register"
+            v-if="!user?.id"
+            href="/register"
             class="w-fit btn bg-black mx-auto mt-6 mb-2.5"
             style="color: #fff; font-size: 15px"
           >

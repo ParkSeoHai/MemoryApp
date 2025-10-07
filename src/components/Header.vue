@@ -83,11 +83,20 @@ const toggleMobileMenu = () => {
     </a>
     <ul class="nav-header flex items-center ms-10 font-bold">
       <li v-for="category in categories" :key="category.id">
-        <a href="">{{ category.name }}</a>
+        <a
+          :href="
+            '/category?menu=' +
+            category.id +
+            '&from_element=mainmenu' +
+            '&name=' +
+            category.name
+          "
+          >{{ category.name }}</a
+        >
         <div v-if="category.subCategories?.length > 0" class="nav-header__dropdown">
           <div class="nav-header__dropdown--right">
             <ul class="list-link">
-              <li>
+              <!-- <li>
                 <a
                   href="#"
                   class="flex items-center hover:underline px-2 pt-3 text-nowrap"
@@ -110,11 +119,18 @@ const toggleMobileMenu = () => {
                   </span>
                 </a>
               </li>
-              <li></li>
-              <li v-for="sub in category.subCategories" :key="sub.id">
-                <a :href="sub.name" class="nav-header__dropdown--item-v2">{{
-                  sub.name
-                }}</a>
+              <li></li> -->
+              <li v-for="sub in category.subCategories.slice(0, 6)" :key="sub.id">
+                <a
+                  :href="
+                    '/category?menu=' +
+                    sub.id +
+                    `&from_element=${category.name}&name=` +
+                    sub.name
+                  "
+                  class="nav-header__dropdown--item-v2"
+                  >{{ sub.name }}</a
+                >
               </li>
             </ul>
           </div>
@@ -204,7 +220,8 @@ const toggleMobileMenu = () => {
                 </svg>
                 <p>Account</p>
               </a>
-              <button
+              <a
+                href="/user/downloads"
                 class="px-[25px] h-[45px] w-full flex items-center gap-3 text-[#121212] hover:bg-[#f0f0f0]"
               >
                 <svg
@@ -223,7 +240,7 @@ const toggleMobileMenu = () => {
                   ></path>
                 </svg>
                 <p>Downloads</p>
-              </button>
+              </a>
             </div>
             <div class="border border-[#e5e5e5]"></div>
             <div class="mt-1">
