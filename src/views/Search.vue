@@ -8,9 +8,11 @@ import axios from "axios";
 import ResourceDetail from "./ResourceDetail.vue";
 import ModalAddCollection from "../components/ModalAddCollection.vue";
 import { URL_API } from "../constant";
-import { handleErrorAPI } from "../utils";
+import api, { handleErrorAPI } from "../utils";
+import { toast } from "vue3-toastify";
 
 const query = ref();
+const user = ref(null);
 
 const categories = ref([]);
 const slides = ref([]);
@@ -88,7 +90,11 @@ const handleClickPlan = (value) => {
 
 const getRelatedTags = async () => {
   try {
-    const res = await axios.get(`${URL_API}/tag/related/${query.value.query}/10`);
+    let url = `${URL_API}/tag/related/${query.value.query}/10`;
+    if (!query.value.query) {
+      url = `${URL_API}/tag/related/0/10`;
+    }
+    const res = await axios.get(url);
     if (res.data?.statusCode !== 200) console.error(res.data);
     return res.data?.data;
   } catch (error) {
@@ -119,6 +125,7 @@ const searchResource = async () => {
       page: page.value,
       limit: limit.value,
       categoryId: categoryId.value,
+      userId: user.value?.id || null,
     });
     console.log(res.data);
     if (res.data?.statusCode !== 200) console.error(res.data);
@@ -197,6 +204,7 @@ const handleRemoveFilter = (item) => {
 };
 
 const init = async () => {
+  user.value = JSON.parse(localStorage.getItem("user"));
   query.value = getQueryParamsFromCurrentUrl();
   slides.value = await getRelatedTags();
   categories.value = await getDataNav();
@@ -251,6 +259,41 @@ const handleSearch = () => {
   const url = new URL(window.location.href); // Lấy URL hiện tại
   url.searchParams.set("query", searchQuery.value);
   window.location.href = url;
+};
+
+const handleAddResourceToFavorite = async (item) => {
+  try {
+    const response = await api.post(`${URL_API}/favorite`, {
+      resourceId: item.id,
+    });
+    if (response.data?.statusCode === 200) {
+      toast.success(
+        response.data?.message || "Thêm tài nguyên vào yêu thích thành công."
+      );
+      // neu thanh cong = 1
+      item.is_favorite = 1;
+    } else {
+      throw new Error("Có lỗi xảy ra trong quá trình thêm tài nguyên vào yêu thích.");
+    }
+  } catch (error) {
+    handleErrorAPI(error);
+  }
+};
+
+const handleRemoveResourceFavorite = async (item) => {
+  try {
+    const response = await api.delete(`${URL_API}/favorite/${item.id}`);
+    if (response.data?.statusCode === 200) {
+      toast.success(
+        response.data?.message || "Xóa tài nguyên khỏi yêu thích thành công."
+      );
+      item.is_favorite = 0;
+    } else {
+      throw new Error("Có lỗi xảy ra trong quá trình xóa tài nguyên khỏi yêu thích.");
+    }
+  } catch (error) {
+    handleErrorAPI(error);
+  }
 };
 
 onMounted(async () => {
@@ -462,11 +505,11 @@ onMounted(async () => {
           >
             <!-- selected -->
             <div v-if="filterSelected.length > 0" class="filter-detail__selected">
-              <ul class="flex flex-wrap gap-3 pt-2 pb-6 font-normal">
+              <ul class="flex flex-wrap gap-3 p-3 pt-5 font-normal">
                 <li v-for="select in filterSelected" :key="select?.id" class="active">
                   <button
                     @click.prevent="handleRemoveFilter(select)"
-                    class="btn"
+                    class="btn capitalize"
                     style="font-weight: 400"
                     title="Remove"
                   >
@@ -571,7 +614,7 @@ onMounted(async () => {
               </button>
               <div class="filter-detail__more">
                 <ul class="flex flex-wrap gap-3 pt-2 pb-6 font-normal">
-                  <li>
+                  <li :class="{ active: query?.plan === 'free' }">
                     <button
                       class="btn"
                       style="font-weight: 400"
@@ -580,7 +623,7 @@ onMounted(async () => {
                       Free
                     </button>
                   </li>
-                  <li>
+                  <li :class="{ active: query?.plan === 'premium' }">
                     <button
                       class="btn"
                       style="font-weight: 400"
@@ -772,6 +815,47 @@ onMounted(async () => {
                         </svg>
                       </button>
                       <button
+                        v-if="item?.is_favorite == 1"
+                        class="btn justify-center bg-white w-[35px] h-[35px]"
+                        style="color: #333; padding: 4px"
+                        title="Like"
+                        @click.stop="handleRemoveResourceFavorite(item)"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="#dc3545"
+                          class="bi bi-heart-fill"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        v-else
+                        class="btn justify-center bg-white w-[35px] h-[35px]"
+                        style="color: #333; padding: 4px"
+                        title="Like"
+                        @click.stop="handleAddResourceToFavorite(item)"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-heart"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"
+                          ></path>
+                        </svg>
+                      </button>
+                      <!-- <button
                         class="btn justify-center bg-white w-[35px] h-[35px]"
                         style="color: #333; padding: 4px"
                         title="Like"
@@ -788,7 +872,7 @@ onMounted(async () => {
                             d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"
                           />
                         </svg>
-                      </button>
+                      </button> -->
                     </div>
                   </div>
                 </div>
@@ -863,6 +947,47 @@ onMounted(async () => {
                         </svg>
                       </button>
                       <button
+                        v-if="item?.is_favorite == 1"
+                        class="btn justify-center bg-white w-[35px] h-[35px]"
+                        style="color: #333; padding: 4px"
+                        title="Like"
+                        @click.stop="handleRemoveResourceFavorite(item)"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="#dc3545"
+                          class="bi bi-heart-fill"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        v-else
+                        class="btn justify-center bg-white w-[35px] h-[35px]"
+                        style="color: #333; padding: 4px"
+                        title="Like"
+                        @click.stop="handleAddResourceToFavorite(item)"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-heart"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"
+                          ></path>
+                        </svg>
+                      </button>
+                      <!-- <button
                         class="btn justify-center bg-white w-[35px] h-[35px]"
                         style="color: #333; padding: 4px"
                         title="Like"
@@ -879,7 +1004,7 @@ onMounted(async () => {
                             d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"
                           />
                         </svg>
-                      </button>
+                      </button> -->
                     </div>
                   </div>
                 </div>
@@ -960,6 +1085,47 @@ onMounted(async () => {
                         </svg>
                       </button>
                       <button
+                        v-if="item?.is_favorite == 1"
+                        class="btn justify-center bg-white w-[35px] h-[35px]"
+                        style="color: #333; padding: 4px"
+                        title="Like"
+                        @click.stop="handleRemoveResourceFavorite(item)"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="#dc3545"
+                          class="bi bi-heart-fill"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        v-else
+                        class="btn justify-center bg-white w-[35px] h-[35px]"
+                        style="color: #333; padding: 4px"
+                        title="Like"
+                        @click.stop="handleAddResourceToFavorite(item)"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-heart"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"
+                          ></path>
+                        </svg>
+                      </button>
+                      <!-- <button
                         class="btn justify-center bg-white w-[35px] h-[35px]"
                         style="color: #333; padding: 4px"
                         title="Like"
@@ -976,7 +1142,7 @@ onMounted(async () => {
                             d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"
                           />
                         </svg>
-                      </button>
+                      </button> -->
                     </div>
                   </div>
                 </div>
@@ -1057,6 +1223,47 @@ onMounted(async () => {
                         </svg>
                       </button>
                       <button
+                        v-if="item?.is_favorite == 1"
+                        class="btn justify-center bg-white w-[35px] h-[35px]"
+                        style="color: #333; padding: 4px"
+                        title="Like"
+                        @click.stop="handleRemoveResourceFavorite(item)"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="#dc3545"
+                          class="bi bi-heart-fill"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        v-else
+                        class="btn justify-center bg-white w-[35px] h-[35px]"
+                        style="color: #333; padding: 4px"
+                        title="Like"
+                        @click.stop="handleAddResourceToFavorite(item)"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-heart"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"
+                          ></path>
+                        </svg>
+                      </button>
+                      <!-- <button
                         class="btn justify-center bg-white w-[35px] h-[35px]"
                         style="color: #333; padding: 4px"
                         title="Like"
@@ -1073,7 +1280,7 @@ onMounted(async () => {
                             d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"
                           />
                         </svg>
-                      </button>
+                      </button> -->
                     </div>
                   </div>
                 </div>
