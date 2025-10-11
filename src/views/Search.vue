@@ -10,6 +10,7 @@ import ModalAddCollection from "../components/ModalAddCollection.vue";
 import { URL_API } from "../constant";
 import api, { handleErrorAPI } from "../utils";
 import { toast } from "vue3-toastify";
+import _ from "lodash";
 
 const query = ref();
 const user = ref(null);
@@ -33,6 +34,15 @@ const dataDetail = ref({});
 
 const showModalCollection = ref(false);
 const dataCollection = ref({});
+
+const sortActive = ref();
+const sortElements = ref([
+  { stt: 1, text: "Mới nhất", value: "newest" },
+  { stt: 2, text: "Cũ nhất", value: "oldest" },
+  { stt: 3, text: "Phổ biến nhất", value: "popular" },
+  { stt: 4, text: "Được yêu thích nhất", value: "most_liked" },
+  { stt: 5, text: "Xu hướng", value: "trending" },
+]);
 
 // watch(page, async () => {
 //   if (page.value) {
@@ -126,6 +136,7 @@ const searchResource = async () => {
       limit: limit.value,
       categoryId: categoryId.value,
       userId: user.value?.id || null,
+      sort: query.value?.sort,
     });
     console.log(res.data);
     if (res.data?.statusCode !== 200) console.error(res.data);
@@ -214,6 +225,11 @@ const init = async () => {
   file_type.value = query.value.file_type || "";
   plan.value = query.value.plan || "";
   limit.value = Number(query.value.limit) || 25;
+  sortActive.value = sortElements.value.find((item) => item?.value == query.value?.sort);
+  // default newest
+  if (!sortActive.value) {
+    sortActive.value = sortElements.value[0];
+  }
   getFilterSelected();
   // const resources = await getResourceTags();
   resources.value = await searchResource();
@@ -294,6 +310,12 @@ const handleRemoveResourceFavorite = async (item) => {
   } catch (error) {
     handleErrorAPI(error);
   }
+};
+
+const handleClickSort = async (item) => {
+  const url = new URL(window.location.href); // Lấy URL hiện tại
+  url.searchParams.set("sort", item.value);
+  window.location.href = url;
 };
 
 onMounted(async () => {
@@ -649,7 +671,7 @@ onMounted(async () => {
             <div class="flex items-center justify-between my-5">
               <div class="filter-result__filter flex items-center gap-10">
                 <button
-                  class="active flex items-center gap-3 cursor-pointer pb-3 text-[14px] font-semibold"
+                  class="active flex items-center gap-3 cursor-pointer pb-3 text-[14px] font-semibold hidden"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -691,7 +713,7 @@ onMounted(async () => {
               >
                 <span class="text-[#777]">Sort by:</span>
                 <button class="flex items-center gap-2 font-semibold">
-                  <span>Most relevant</span>
+                  <span>{{ sortActive?.text }}</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 512 512"
@@ -704,9 +726,29 @@ onMounted(async () => {
                     ></path>
                   </svg>
                 </button>
-                <div class="dropdown hidden">
+                <div class="dropdown">
                   <ul>
-                    <li class="flex items-center gap-2 p-3">
+                    <li
+                      v-for="itemSort in sortElements"
+                      class="flex items-center gap-2 p-3 cursor-pointer"
+                      @click="handleClickSort(itemSort)"
+                    >
+                      <svg
+                        v-if="sortActive?.value == itemSort?.value"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-check"
+                        viewBox="0 0 16 16"
+                      >
+                        <path
+                          d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"
+                        />
+                      </svg>
+                      {{ itemSort?.text }}
+                    </li>
+                    <!-- <li class="flex items-center gap-2 p-3">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="16"
@@ -720,22 +762,7 @@ onMounted(async () => {
                         />
                       </svg>
                       Most relevant
-                    </li>
-                    <li class="flex items-center gap-2 p-3">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        fill="currentColor"
-                        class="bi bi-check"
-                        viewBox="0 0 16 16"
-                      >
-                        <path
-                          d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"
-                        />
-                      </svg>
-                      Relevant
-                    </li>
+                    </li> -->
                   </ul>
                 </div>
               </div>
@@ -761,9 +788,41 @@ onMounted(async () => {
                     >
                       <source :src="item.file_url" type="video/mp4" />
                     </video>
-                    <img v-else :src="item?.file_url" :alt="item?.title" />
+                    <img
+                      v-else
+                      :src="item?.file_url"
+                      :alt="item?.title"
+                      style="width: 100%"
+                    />
                   </div>
                   <div class="absolute bg-opacity pointer-events-none inset-0"></div>
+                  <div
+                    v-if="item?.plan == 'premium'"
+                    class="absolute left-4 top-4 flex gap-2"
+                  >
+                    <span
+                      class="flex size-8 items-center justify-center rounded-full bg-overlay-dialog bg-[#00000080]"
+                      title="Premium"
+                    >
+                      <span
+                        class="flex size-[29px] items-center justify-center rounded-full"
+                        data-state="closed"
+                      >
+                        <span class="hidden">Premium</span
+                        ><svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 512 512"
+                          width="16"
+                          height="16"
+                          aria-hidden="true"
+                          class="w-[1em] h-[1em] text-sm text-[#feb602]"
+                          fill="#feb602"
+                        >
+                          <path
+                            d="M486.2 50.2c-9.6-3.8-20.5-1.3-27.5 6.2l-98.2 125.5-83-161.1C273 13.2 264.9 8.5 256 8.5s-17.1 4.7-21.5 12.3l-83 161.1L53.3 56.5c-7-7.5-17.9-10-27.5-6.2C16.3 54 10 63.2 10 73.5v333c0 35.8 29.2 65 65 65h362c35.8 0 65-29.2 65-65v-333c0-10.3-6.3-19.5-15.8-23.3"
+                          ></path></svg></span
+                    ></span>
+                  </div>
                   <div
                     class="absolute btn-actions w-fit top-0 right-0 flex flex-col h-full rounded-md py-3.5 pe-3.5 text-white"
                   >
@@ -894,9 +953,41 @@ onMounted(async () => {
                     >
                       <source :src="item.file_url" type="video/mp4" />
                     </video>
-                    <img v-else :src="item?.file_url" :alt="item?.title" />
+                    <img
+                      v-else
+                      :src="item?.file_url"
+                      :alt="item?.title"
+                      style="width: 100%"
+                    />
                   </div>
                   <div class="absolute bg-opacity pointer-events-none inset-0"></div>
+                  <div
+                    v-if="item?.plan == 'premium'"
+                    class="absolute left-4 top-4 flex gap-2"
+                  >
+                    <span
+                      class="flex size-8 items-center justify-center rounded-full bg-overlay-dialog bg-[#00000080]"
+                      title="Premium"
+                    >
+                      <span
+                        class="flex size-[29px] items-center justify-center rounded-full"
+                        data-state="closed"
+                      >
+                        <span class="hidden">Premium</span
+                        ><svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 512 512"
+                          width="16"
+                          height="16"
+                          aria-hidden="true"
+                          class="w-[1em] h-[1em] text-sm text-[#feb602]"
+                          fill="#feb602"
+                        >
+                          <path
+                            d="M486.2 50.2c-9.6-3.8-20.5-1.3-27.5 6.2l-98.2 125.5-83-161.1C273 13.2 264.9 8.5 256 8.5s-17.1 4.7-21.5 12.3l-83 161.1L53.3 56.5c-7-7.5-17.9-10-27.5-6.2C16.3 54 10 63.2 10 73.5v333c0 35.8 29.2 65 65 65h362c35.8 0 65-29.2 65-65v-333c0-10.3-6.3-19.5-15.8-23.3"
+                          ></path></svg></span
+                    ></span>
+                  </div>
                   <div
                     class="absolute btn-actions w-fit top-0 right-0 flex flex-col h-full rounded-md py-3.5 pe-3.5 text-white"
                   >
@@ -1032,9 +1123,37 @@ onMounted(async () => {
                       "
                       :src="item?.file_url"
                       :alt="item?.title"
+                      style="width: 100%"
                     />
                   </div>
                   <div class="absolute bg-opacity pointer-events-none inset-0"></div>
+                  <div
+                    v-if="item?.plan == 'premium'"
+                    class="absolute left-4 top-4 flex gap-2"
+                  >
+                    <span
+                      class="flex size-8 items-center justify-center rounded-full bg-overlay-dialog bg-[#00000080]"
+                      title="Premium"
+                    >
+                      <span
+                        class="flex size-[29px] items-center justify-center rounded-full"
+                        data-state="closed"
+                      >
+                        <span class="hidden">Premium</span
+                        ><svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 512 512"
+                          width="16"
+                          height="16"
+                          aria-hidden="true"
+                          class="w-[1em] h-[1em] text-sm text-[#feb602]"
+                          fill="#feb602"
+                        >
+                          <path
+                            d="M486.2 50.2c-9.6-3.8-20.5-1.3-27.5 6.2l-98.2 125.5-83-161.1C273 13.2 264.9 8.5 256 8.5s-17.1 4.7-21.5 12.3l-83 161.1L53.3 56.5c-7-7.5-17.9-10-27.5-6.2C16.3 54 10 63.2 10 73.5v333c0 35.8 29.2 65 65 65h362c35.8 0 65-29.2 65-65v-333c0-10.3-6.3-19.5-15.8-23.3"
+                          ></path></svg></span
+                    ></span>
+                  </div>
                   <div
                     class="absolute btn-actions w-fit top-0 right-0 flex flex-col h-full rounded-md py-3.5 pe-3.5 text-white"
                   >
@@ -1170,9 +1289,37 @@ onMounted(async () => {
                       "
                       :src="item?.file_url"
                       :alt="item?.title"
+                      style="width: 100%"
                     />
                   </div>
                   <div class="absolute bg-opacity pointer-events-none inset-0"></div>
+                  <div
+                    v-if="item?.plan == 'premium'"
+                    class="absolute left-4 top-4 flex gap-2"
+                  >
+                    <span
+                      class="flex size-8 items-center justify-center rounded-full bg-overlay-dialog bg-[#00000080]"
+                      title="Premium"
+                    >
+                      <span
+                        class="flex size-[29px] items-center justify-center rounded-full"
+                        data-state="closed"
+                      >
+                        <span class="hidden">Premium</span
+                        ><svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 512 512"
+                          width="16"
+                          height="16"
+                          aria-hidden="true"
+                          class="w-[1em] h-[1em] text-sm text-[#feb602]"
+                          fill="#feb602"
+                        >
+                          <path
+                            d="M486.2 50.2c-9.6-3.8-20.5-1.3-27.5 6.2l-98.2 125.5-83-161.1C273 13.2 264.9 8.5 256 8.5s-17.1 4.7-21.5 12.3l-83 161.1L53.3 56.5c-7-7.5-17.9-10-27.5-6.2C16.3 54 10 63.2 10 73.5v333c0 35.8 29.2 65 65 65h362c35.8 0 65-29.2 65-65v-333c0-10.3-6.3-19.5-15.8-23.3"
+                          ></path></svg></span
+                    ></span>
+                  </div>
                   <div
                     class="absolute btn-actions w-fit top-0 right-0 flex flex-col h-full rounded-md py-3.5 pe-3.5 text-white"
                   >

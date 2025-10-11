@@ -41,6 +41,12 @@ const isMobileMenuOpen = ref(false);
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
 };
+
+const handleLogout = () => {
+  localStorage.removeItem("user");
+  localStorage.removeItem("token");
+  window.location.href = "/";
+};
 </script>
 
 <template>
@@ -175,13 +181,14 @@ const toggleMobileMenu = () => {
               </div>
             </div>
             <div class="px-[25px] mb-5">
-              <button
+              <a
                 class="btn bg-[#336aea] mt-3 w-full justify-center"
                 style="color: #fff; border: none; font-size: 13px; padding: 4px 12px"
+                href="/pricing"
               >
                 Get a plan
-              </button>
-              <button
+              </a>
+              <!-- <button
                 class="btn bg-white mt-3 w-full justify-center border border-[#d8d8d8]"
                 style="font-size: 13px; padding: 4px 12px; color: #424242"
               >
@@ -198,7 +205,7 @@ const toggleMobileMenu = () => {
                   ></path>
                 </svg>
                 Add members
-              </button>
+              </button> -->
             </div>
             <div class="border border-[#e5e5e5]"></div>
             <div class="mt-1">
@@ -246,6 +253,7 @@ const toggleMobileMenu = () => {
             <div class="mt-1">
               <button
                 class="px-[25px] h-[45px] w-full flex items-center gap-3 text-[#121212] hover:bg-[#f0f0f0]"
+                @click.prevent="handleLogout"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

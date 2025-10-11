@@ -1,0 +1,18 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.vue';
+import PaymentFailed from '../../components/PaymentFailed.vue';
+import Footer from '../../components/Footer.vue';
+---
+
+<Layout>
+	<main>
+		<PaymentFailed client:idle />
+	</main>
+</Layout>
+
+<style>
+	#header {
+		color: #424242;
+	}
+</style>

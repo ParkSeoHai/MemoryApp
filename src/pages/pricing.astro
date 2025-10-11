@@ -1,0 +1,20 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.vue';
+import PricingPage from '../views/Pricing.vue';
+import Footer from '../components/Footer.vue';
+---
+
+<Layout>
+	<Header client:idle />
+	<main>
+		<PricingPage client:idle />
+	</main>
+	<Footer client:idle />
+</Layout>
+
+<style>
+	#header {
+		color: #424242;
+	}
+</style>

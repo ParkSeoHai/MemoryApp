@@ -261,7 +261,11 @@ onMounted(async () => {
             </div>
             <div class="ms-auto">
               <div class="flex items-center btn-download text-[#fff]">
-                <button class="btn bg-[#336aea]" @click="handleDownload(null)">
+                <button
+                  v-if="dataItem?.plan == 'free' || user?.is_premium"
+                  class="btn bg-[#336aea]"
+                  @click="handleDownload(null)"
+                >
                   <span class="me-1">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -281,7 +285,30 @@ onMounted(async () => {
                   </span>
                   Download
                 </button>
+                <a
+                  v-else-if="dataItem.plan == 'premium'"
+                  type="button"
+                  class="rounded flex items-center gap-2 py-2 px-4 hover:bg-[#7878781a] shrink-0 font-semibold text-sm bg-[#7878781a] text-[#ea7e11]"
+                  href="/pricing"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="-49 141 512 512"
+                    width="16"
+                    height="16"
+                    aria-hidden="true"
+                    class="w-[1em] h-[1em] fill-current text-lg"
+                  >
+                    <path
+                      d="M438 403c-13.808 0-25 11.193-25 25v134c0 19.299-15.701 35-35 35H36c-19.299 0-35-15.701-35-35V428c0-13.807-11.193-25-25-25s-25 11.193-25 25v134c0 46.869 38.131 85 85 85h342c46.869 0 85-38.131 85-85V428c0-13.807-11.192-25-25-25"
+                    ></path>
+                    <path
+                      d="M189.322 530.678a25.004 25.004 0 0 0 35.356 0l84.853-84.853c9.763-9.763 9.763-25.592 0-35.355s-25.592-9.763-35.355 0L232 452.645V172c0-13.807-11.193-25-25-25s-25 11.193-25 25v280.645l-42.175-42.175c-9.764-9.763-25.592-9.763-35.355 0s-9.763 25.592 0 35.355z"
+                    ></path></svg
+                  >Go Premium
+                </a>
                 <button
+                  v-if="dataItem?.plan == 'free' || user?.is_premium"
                   class="btn btn-download-more bg-[#336aea]"
                   :class="{ active: showMoreDownload }"
                   @click.prevent="showMoreDownload = !showMoreDownload"
@@ -455,6 +482,33 @@ onMounted(async () => {
                           </svg>
                         </button>
                       </div>
+                    </div>
+                    <div
+                      v-if="dataItem?.plan == 'premium'"
+                      class="absolute left-4 top-4 flex gap-2"
+                    >
+                      <span
+                        class="flex size-8 items-center justify-center rounded-full bg-overlay-dialog bg-[#00000080]"
+                        title="Premium"
+                      >
+                        <span
+                          class="flex size-[29px] items-center justify-center rounded-full"
+                          data-state="closed"
+                        >
+                          <span class="hidden">Premium</span
+                          ><svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 512 512"
+                            width="16"
+                            height="16"
+                            aria-hidden="true"
+                            class="w-[1em] h-[1em] text-sm text-[#feb602]"
+                            fill="#feb602"
+                          >
+                            <path
+                              d="M486.2 50.2c-9.6-3.8-20.5-1.3-27.5 6.2l-98.2 125.5-83-161.1C273 13.2 264.9 8.5 256 8.5s-17.1 4.7-21.5 12.3l-83 161.1L53.3 56.5c-7-7.5-17.9-10-27.5-6.2C16.3 54 10 63.2 10 73.5v333c0 35.8 29.2 65 65 65h362c35.8 0 65-29.2 65-65v-333c0-10.3-6.3-19.5-15.8-23.3"
+                            ></path></svg></span
+                      ></span>
                     </div>
                     <p
                       v-if="dataItem?.file_type == 'image'"
