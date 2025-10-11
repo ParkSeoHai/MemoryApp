@@ -8,6 +8,8 @@ import axios from "axios";
 import { URL_API } from "../constant";
 import { handleErrorAPI } from "../utils";
 
+console.log("URL_API: ", URL_API, process.env?.URL_API);
+
 const url = URL_API;
 
 const user = ref();
