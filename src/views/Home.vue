@@ -20,6 +20,7 @@ const swiperInstance = ref(null);
 const slides = ref([]);
 const favorites = ref([]);
 const resourcesNew = ref([]);
+const resourceNewResults = ref([]);
 
 const searchInput = ref("");
 
@@ -134,7 +135,19 @@ const init = async () => {
   tags.value = await getTagsRandom(5);
   favorites.value = await getTopFavorites(9);
   resourcesNew.value = await getResourcesNew(12);
+  resourceNewResults.value = splitIntoFourEqualParts(resourcesNew.value || []);
 };
+
+function splitIntoFourEqualParts(arr) {
+  const chunkSize = Math.ceil(arr.length / 4);
+  const result = [
+    arr.slice(0, chunkSize),
+    arr.slice(chunkSize, chunkSize * 2),
+    arr.slice(chunkSize * 2, chunkSize * 3),
+    arr.slice(chunkSize * 3),
+  ];
+  return result;
+}
 
 const handleSearch = () => {
   window.location.href = `/search?query=${searchInput.value}`;
@@ -478,7 +491,7 @@ onMounted(() => {
               >
                 <img
                   class="hover:scale-105 w-full h-full object-cover"
-                  style="transition: scale 0.3s linear"
+                  style="transition: scale 0.3s linear; width: 100%"
                   :src="favorite.file_url"
                 />
                 <div class="absolute inset-0 pointer-events-none"></div>
@@ -511,55 +524,197 @@ onMounted(() => {
           Discover thousands of amazing images created by Memory’s artists
         </p>
         <div class="home-inspired grid grid-cols-4 gap-8 mt-8">
-          <div
-            v-for="itemNew in resourcesNew"
-            :key="itemNew.id"
-            class="flex flex-col gap-8"
-          >
-            <template v-if="itemNew.file_type === 'video'">
-              <a
-                :href="`search?query=${itemNew?.tag_name}&detail_id=${itemNew?.id}`"
-                class="home-inspired__item relative overflow-hidden"
+          <div class="flex flex-col gap-6">
+            <div v-for="itemNew in resourceNewResults?.[0]" :key="itemNew.id">
+              <template v-if="itemNew.file_type === 'video'">
+                <a
+                  :href="`search?query=${itemNew?.tag_name}&detail_id=${itemNew?.id}`"
+                  class="home-inspired__item relative overflow-hidden"
+                >
+                  <video
+                    class="item-preview h-full w-full object-cover rounded-md"
+                    @mouseover="playVideo"
+                    @mouseleave="stopVideo"
+                  >
+                    <source :src="itemNew.file_url" type="video/mp4" />
+                  </video>
+                  <div
+                    class="absolute flex flex-col justify-end inset-0 pointer-events-none rounded-md p-3.5 text-white"
+                  >
+                    <p class="home-inspired__text">
+                      {{ itemNew.description }}
+                    </p>
+                  </div>
+                </a>
+              </template>
+              <template
+                v-else-if="
+                  itemNew.file_type === 'image' || itemNew.file_type === 'template'
+                "
               >
-                <video
-                  class="item-preview h-full w-full object-cover"
-                  @mouseover="playVideo"
-                  @mouseleave="stopVideo"
+                <a
+                  :href="`search?query=${itemNew?.tag_name}&detail_id=${itemNew?.id}`"
+                  class="home-inspired__item relative overflow-hidden"
                 >
-                  <source :src="itemNew.file_url" type="video/mp4" />
-                </video>
-                <div
-                  class="absolute flex flex-col justify-end inset-0 pointer-events-none rounded-md p-3.5 text-white"
+                  <img
+                    class="item-preview rounded-md w-full"
+                    :src="itemNew.file_url"
+                    :alt="itemNew.title"
+                  />
+                  <div
+                    class="absolute flex flex-col justify-end inset-0 pointer-events-none rounded-md p-3.5 text-white"
+                  >
+                    <p class="home-inspired__text">
+                      {{ itemNew.description }}
+                    </p>
+                  </div>
+                </a>
+              </template>
+            </div>
+          </div>
+          <div class="flex flex-col gap-6">
+            <div v-for="itemNew in resourceNewResults?.[1]" :key="itemNew.id">
+              <template v-if="itemNew.file_type === 'video'">
+                <a
+                  :href="`search?query=${itemNew?.tag_name}&detail_id=${itemNew?.id}`"
+                  class="home-inspired__item relative overflow-hidden"
                 >
-                  <p class="home-inspired__text">
-                    {{ itemNew.description }}
-                  </p>
-                </div>
-              </a>
-            </template>
-            <template
-              v-else-if="
-                itemNew.file_type === 'image' || itemNew.file_type === 'template'
-              "
-            >
-              <a
-                :href="`search?query=${itemNew?.tag_name}&detail_id=${itemNew?.id}`"
-                class="home-inspired__item relative overflow-hidden"
+                  <video
+                    class="item-preview h-full w-full object-cover rounded-md"
+                    @mouseover="playVideo"
+                    @mouseleave="stopVideo"
+                  >
+                    <source :src="itemNew.file_url" type="video/mp4" />
+                  </video>
+                  <div
+                    class="absolute flex flex-col justify-end inset-0 pointer-events-none rounded-md p-3.5 text-white"
+                  >
+                    <p class="home-inspired__text">
+                      {{ itemNew.description }}
+                    </p>
+                  </div>
+                </a>
+              </template>
+              <template
+                v-else-if="
+                  itemNew.file_type === 'image' || itemNew.file_type === 'template'
+                "
               >
-                <img
-                  class="item-preview rounded-md"
-                  :src="itemNew.file_url"
-                  :alt="itemNew.title"
-                />
-                <div
-                  class="absolute flex flex-col justify-end inset-0 pointer-events-none rounded-md p-3.5 text-white"
+                <a
+                  :href="`search?query=${itemNew?.tag_name}&detail_id=${itemNew?.id}`"
+                  class="home-inspired__item relative overflow-hidden"
                 >
-                  <p class="home-inspired__text">
-                    {{ itemNew.description }}
-                  </p>
-                </div>
-              </a>
-            </template>
+                  <img
+                    class="item-preview rounded-md w-full"
+                    :src="itemNew.file_url"
+                    :alt="itemNew.title"
+                  />
+                  <div
+                    class="absolute flex flex-col justify-end inset-0 pointer-events-none rounded-md p-3.5 text-white"
+                  >
+                    <p class="home-inspired__text">
+                      {{ itemNew.description }}
+                    </p>
+                  </div>
+                </a>
+              </template>
+            </div>
+          </div>
+          <div class="flex flex-col gap-6">
+            <div v-for="itemNew in resourceNewResults?.[2]" :key="itemNew.id">
+              <template v-if="itemNew.file_type === 'video'">
+                <a
+                  :href="`search?query=${itemNew?.tag_name}&detail_id=${itemNew?.id}`"
+                  class="home-inspired__item relative overflow-hidden"
+                >
+                  <video
+                    class="item-preview h-full w-full object-cover rounded-md"
+                    @mouseover="playVideo"
+                    @mouseleave="stopVideo"
+                  >
+                    <source :src="itemNew.file_url" type="video/mp4" />
+                  </video>
+                  <div
+                    class="absolute flex flex-col justify-end inset-0 pointer-events-none rounded-md p-3.5 text-white"
+                  >
+                    <p class="home-inspired__text">
+                      {{ itemNew.description }}
+                    </p>
+                  </div>
+                </a>
+              </template>
+              <template
+                v-else-if="
+                  itemNew.file_type === 'image' || itemNew.file_type === 'template'
+                "
+              >
+                <a
+                  :href="`search?query=${itemNew?.tag_name}&detail_id=${itemNew?.id}`"
+                  class="home-inspired__item relative overflow-hidden"
+                >
+                  <img
+                    class="item-preview rounded-md w-full"
+                    :src="itemNew.file_url"
+                    :alt="itemNew.title"
+                  />
+                  <div
+                    class="absolute flex flex-col justify-end inset-0 pointer-events-none rounded-md p-3.5 text-white"
+                  >
+                    <p class="home-inspired__text">
+                      {{ itemNew.description }}
+                    </p>
+                  </div>
+                </a>
+              </template>
+            </div>
+          </div>
+          <div class="flex flex-col gap-6">
+            <div v-for="itemNew in resourceNewResults?.[3]" :key="itemNew.id">
+              <template v-if="itemNew.file_type === 'video'">
+                <a
+                  :href="`search?query=${itemNew?.tag_name}&detail_id=${itemNew?.id}`"
+                  class="home-inspired__item relative overflow-hidden"
+                >
+                  <video
+                    class="item-preview h-full w-full object-cover rounded-md"
+                    @mouseover="playVideo"
+                    @mouseleave="stopVideo"
+                  >
+                    <source :src="itemNew.file_url" type="video/mp4" />
+                  </video>
+                  <div
+                    class="absolute flex flex-col justify-end inset-0 pointer-events-none rounded-md p-3.5 text-white"
+                  >
+                    <p class="home-inspired__text">
+                      {{ itemNew.description }}
+                    </p>
+                  </div>
+                </a>
+              </template>
+              <template
+                v-else-if="
+                  itemNew.file_type === 'image' || itemNew.file_type === 'template'
+                "
+              >
+                <a
+                  :href="`search?query=${itemNew?.tag_name}&detail_id=${itemNew?.id}`"
+                  class="home-inspired__item relative overflow-hidden"
+                >
+                  <img
+                    class="item-preview rounded-md w-full"
+                    :src="itemNew.file_url"
+                    :alt="itemNew.title"
+                  />
+                  <div
+                    class="absolute flex flex-col justify-end inset-0 pointer-events-none rounded-md p-3.5 text-white"
+                  >
+                    <p class="home-inspired__text">
+                      {{ itemNew.description }}
+                    </p>
+                  </div>
+                </a>
+              </template>
+            </div>
           </div>
         </div>
       </div>

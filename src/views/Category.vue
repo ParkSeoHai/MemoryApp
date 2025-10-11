@@ -28,22 +28,33 @@ const init = async () => {
   }
   tags.value = await getTagsRandom(5);
   query.value = getQueryParamsFromCurrentUrl();
+  categoriesShow.value = await getCategoryById(query.value?.menu);
   // get categories show
-  const categories = await getDataNav();
-  if (query.value?.menu) {
-    if (query.value?.from_element == "mainmenu") {
-      categoriesShow.value = categories.find((item) => item.id == query.value.menu);
-    } else {
-      // sub menu
-      const categoryParent = categories.find((item) => item.id == query.value.parent);
-      categoriesShow.value = categoryParent?.subCategories.find(
-        (item) => item.id == query.value.menu
-      );
-    }
-  }
+  // const categories = await getDataNav();
+  // if (query.value?.menu) {
+  //   if (query.value?.from_element == "mainmenu") {
+  //     categoriesShow.value = categories.find((item) => item.id == query.value.menu);
+  //   } else {
+  //     // sub menu
+  //     const categoryParent = categories.find((item) => item.id == query.value.parent);
+  //     categoriesShow.value = categoryParent?.subCategories.find(
+  //       (item) => item.id == query.value.menu
+  //     );
+  //   }
+  // }
   resources.value = await getResourcesByCategory(query.value?.menu);
   // tách thành 4 mảng result
   results.value = splitIntoFourEqualParts(resources.value || []);
+};
+
+const getCategoryById = async (id) => {
+  try {
+    const res = await axios.get(`${url}/category/${id}`);
+    if (res.data?.statusCode !== 200) console.error(res.data);
+    return res.data?.data;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 function splitIntoFourEqualParts(arr) {
