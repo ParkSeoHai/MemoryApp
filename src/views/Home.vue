@@ -68,6 +68,12 @@ const getTopDownloadsByType = async (file_type) => {
       number: 10,
     });
     if (res.data?.statusCode !== 200) console.error(res.data);
+    // lọc các id trùng nhau, ví dụ: có 2 ảnh cùng id thì chỉ lấy 1
+    if (res?.data?.data) {
+      res.data.data = res.data?.data.filter(
+        (item, index, self) => index === self.findIndex((t) => t.id === item.id)
+      );
+    }
     return res.data?.data;
   } catch (error) {
     handleErrorAPI(error);
