@@ -1,13 +1,7 @@
 <template>
-  <div
-    v-if="show"
-    class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-  >
+  <div v-if="show" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6 relative">
-      <button
-        @click="close"
-        class="absolute top-3 right-3 text-gray-400 hover:text-gray-700"
-      >
+      <button @click="close" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700">
         ✕
       </button>
 
@@ -18,43 +12,19 @@
           <h3 class="font-semibold mb-2">Billing information</h3>
 
           <div class="space-y-3">
-            <div>
-              <label class="text-sm font-medium"
-                >First name <span class="text-red-500">*</span></label
-              >
-              <input
-                v-model="billing.firstName"
-                type="text"
-                class="w-full border rounded-md px-3 py-2 mt-1"
-                placeholder="Your name"
-                required
-              />
-            </div>
-
-            <div>
-              <label class="text-sm font-medium">Country</label>
-              <select
-                v-model="billing.country"
-                class="w-full border rounded-md px-3 py-2 mt-1"
-              >
-                <option>Vietnam</option>
-              </select>
+            <div class="text-sm text-gray-600">
+              Thông tin thanh toán sẽ được xử lý an toàn qua VNPAY
             </div>
           </div>
 
           <h3 class="font-semibold mt-6 mb-2">Payment method</h3>
           <div class="flex gap-3 mb-4">
-            <button
-              v-for="method in ['vnpay']"
-              :key="method"
-              @click="paymentMethod = method"
-              :class="[
-                'border rounded-md px-4 py-2 flex-1 flex items-center justify-center gap-2',
-                paymentMethod === method
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'hover:bg-gray-50',
-              ]"
-            >
+            <button v-for="method in ['vnpay']" :key="method" @click="paymentMethod = method" :class="[
+              'border rounded-md px-4 py-2 flex-1 flex items-center justify-center gap-2',
+              paymentMethod === method
+                ? 'border-blue-500 bg-blue-50'
+                : 'hover:bg-gray-50',
+            ]">
               <template v-if="method === 'vnpay'">VNPAY</template>
             </button>
           </div>
@@ -154,10 +124,7 @@
             </div>
           </div>
 
-          <button
-            @click="confirmPay"
-            class="mt-4 w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
-          >
+          <button @click="confirmPay" class="mt-4 w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">
             Confirm and Pay
           </button>
         </div>
@@ -219,16 +186,11 @@ const totalPrice = computed(() => {
 
 const confirmPay = async () => {
   try {
-    if (!billing.value.firstName) {
-      toast.error("Please enter your first name.");
-      return;
-    }
-
     const { data } = await api.post(`${URL_API}/payment/vnpay`, {
       amount: totalPrice.value, // Tổng số tiền cần thanh toán (đơn vị: VND)
       plan: props.plan?.id, // Gói người dùng chọn
-      name: billing.value.firstName || "Khách hàng",
-      country: billing.value.country || "Vietnam",
+      name: "Khách hàng", // Tên mặc định
+      country: "Vietnam", // Quốc gia mặc định
       users: users.value || 1,
       cycle: billingCycle.value || "monthly",
       paymentMethod: paymentMethod.value || "vnpay",

@@ -29,7 +29,6 @@ const init = async () => {
   } else {
     user.value = null;
   }
-  console.log(user.value);
 };
 
 onMounted(() => {
@@ -46,6 +45,18 @@ const handleLogout = () => {
   localStorage.removeItem("user");
   localStorage.removeItem("token");
   window.location.href = "/";
+};
+
+const formatDate = (dateString) => {
+  if (!dateString) return 'Không xác định';
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Không xác định';
+    return date.toLocaleDateString('vi-VN');
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return 'Không xác định';
+  }
 };
 </script>
 
@@ -89,16 +100,12 @@ const handleLogout = () => {
     </a>
     <ul class="nav-header flex items-center ms-10 font-bold">
       <li v-for="category in categories" :key="category.id">
-        <a
-          :href="
-            '/category?menu=' +
-            category.id +
-            '&from_element=mainmenu' +
-            '&name=' +
-            category.name
-          "
-          >{{ category.name }}</a
-        >
+        <a :href="'/category?menu=' +
+          category.id +
+          '&from_element=mainmenu' +
+          '&name=' +
+          category.name
+          ">{{ category.name }}</a>
         <div v-if="category.subCategories?.length > 0" class="nav-header__dropdown">
           <div class="nav-header__dropdown--right">
             <ul class="list-link">
@@ -127,16 +134,11 @@ const handleLogout = () => {
               </li>
               <li></li> -->
               <li v-for="sub in category.subCategories.slice(0, 6)" :key="sub.id">
-                <a
-                  :href="
-                    '/category?menu=' +
-                    sub.id +
-                    `&from_element=${category.name}&name=` +
-                    sub.name
-                  "
-                  class="nav-header__dropdown--item-v2"
-                  >{{ sub.name }}</a
-                >
+                <a :href="'/category?menu=' +
+                  sub.id +
+                  `&from_element=${category.name}&name=` +
+                  sub.name
+                  " class="nav-header__dropdown--item-v2">{{ sub.name }}</a>
               </li>
             </ul>
           </div>
@@ -148,30 +150,19 @@ const handleLogout = () => {
     </div>
     <template v-else>
       <div class="relative ms-auto">
-        <div
-          class="flex items-center gap-2 cursor-pointer"
-          @click="showUserDropdown = !showUserDropdown"
-        >
+        <div class="flex items-center gap-2 cursor-pointer" @click="showUserDropdown = !showUserDropdown">
           <img :src="user?.avatar" class="w-[24px] h-[24px] rounded-full" />
           <span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 512 512"
-              width="16"
-              height="16"
-              fill="currentColor"
-              aria-hidden="true"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="16" height="16" fill="currentColor"
+              aria-hidden="true">
               <path
-                d="m256 275.6-92.3-92.3c-9.8-9.8-25.6-9.8-35.4 0s-9.8 25.6 0 35.4l110 110c4.9 4.9 11.3 7.3 17.7 7.3s12.8-2.4 17.7-7.3l110-110c9.8-9.8 9.8-25.6 0-35.4s-25.6-9.8-35.4 0z"
-              ></path>
+                d="m256 275.6-92.3-92.3c-9.8-9.8-25.6-9.8-35.4 0s-9.8 25.6 0 35.4l110 110c4.9 4.9 11.3 7.3 17.7 7.3s12.8-2.4 17.7-7.3l110-110c9.8-9.8 9.8-25.6 0-35.4s-25.6-9.8-35.4 0z">
+              </path>
             </svg>
           </span>
         </div>
-        <div
-          v-if="showUserDropdown"
-          class="user-dropdown absolute w-[320px] right-0 top-[35px] bg-white z-[999] rounded-md shadow-md"
-        >
+        <div v-if="showUserDropdown"
+          class="user-dropdown absolute w-[320px] right-0 top-[35px] bg-white z-[999] rounded-md shadow-md">
           <div class="pt-[25px] pb-[5px]">
             <div class="px-[25px] flex items-center gap-4 mb-5">
               <img class="w-[36px] h-[36px] rounded-full" :src="user?.avatar" />
@@ -181,11 +172,24 @@ const handleLogout = () => {
               </div>
             </div>
             <div class="px-[25px] mb-5">
-              <a
-                class="btn bg-[#336aea] mt-3 w-full justify-center"
-                style="color: #fff; border: none; font-size: 13px; padding: 4px 12px"
-                href="/pricing"
-              >
+              <!-- Hiển thị thông tin gói nếu user đã có premium -->
+              <div v-if="user?.is_premium"
+                class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-lg p-3 text-center">
+                <div class="flex items-center justify-center gap-2 mb-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="16" height="16"
+                    fill="currentColor">
+                    <path
+                      d="M486.2 50.2c-9.6-3.8-20.5-1.3-27.5 6.2l-98.2 125.5-83-161.1C273 13.2 264.9 8.5 256 8.5s-17.1 4.7-21.5 12.3l-83 161.1L53.3 56.5c-7-7.5-17.9-10-27.5-6.2C16.3 54 10 63.2 10 73.5v333c0 35.8 29.2 65 65 65h362c35.8 0 65-29.2 65-65v-333c0-10.3-6.3-19.5-15.8-23.3" />
+                  </svg>
+                  <span class="font-bold text-sm">{{ user?.plan || 'Premium' }}</span>
+                </div>
+                <div class="text-xs opacity-90">
+                  Hết hạn: {{ formatDate(user?.end || user?.end_date) }}
+                </div>
+              </div>
+              <!-- Nút Get a plan nếu chưa có gói -->
+              <a v-else class="btn bg-[#336aea] mt-3 w-full justify-center"
+                style="color: #fff; border: none; font-size: 13px; padding: 4px 12px" href="/pricing">
                 Get a plan
               </a>
               <!-- <button
@@ -209,66 +213,42 @@ const handleLogout = () => {
             </div>
             <div class="border border-[#e5e5e5]"></div>
             <div class="mt-1">
-              <a
-                href="/user/me"
-                class="px-[25px] h-[45px] w-full flex items-center gap-3 text-[#121212] hover:bg-[#f0f0f0]"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="-49 141 512 512"
-                  width="16"
-                  height="16"
-                  aria-hidden="true"
-                  fill="currentColor"
-                >
+              <a href="/user/me"
+                class="px-[25px] h-[45px] w-full flex items-center gap-3 text-[#121212] hover:bg-[#f0f0f0]">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="-49 141 512 512" width="16" height="16"
+                  aria-hidden="true" fill="currentColor">
                   <path
-                    d="M423 638H-9c-13.807 0-25-11.193-25-25 0-53.438 17.131-104.058 49.542-146.388 22.2-28.994 50.961-52.656 83.376-69.006C75.53 371.377 62 337.07 62 301c0-79.953 65.047-145 145-145s145 65.047 145 145c0 36.07-13.53 70.377-36.918 96.606 32.416 16.349 61.177 40.012 83.376 69.005C430.869 508.942 448 559.562 448 613c0 13.807-11.193 25-25 25M17.657 588h378.687c-9.908-74.383-63.38-137.724-136.792-158.682a25 25 0 0 1-5.533-45.75C283.615 366.669 302 335.03 302 301c0-52.383-42.617-95-95-95s-95 42.617-95 95c0 34.03 18.386 65.668 47.981 82.568a25 25 0 0 1 12.423 24.712 25 25 0 0 1-17.956 21.038C81.037 450.276 27.564 513.617 17.657 588"
-                  ></path>
+                    d="M423 638H-9c-13.807 0-25-11.193-25-25 0-53.438 17.131-104.058 49.542-146.388 22.2-28.994 50.961-52.656 83.376-69.006C75.53 371.377 62 337.07 62 301c0-79.953 65.047-145 145-145s145 65.047 145 145c0 36.07-13.53 70.377-36.918 96.606 32.416 16.349 61.177 40.012 83.376 69.005C430.869 508.942 448 559.562 448 613c0 13.807-11.193 25-25 25M17.657 588h378.687c-9.908-74.383-63.38-137.724-136.792-158.682a25 25 0 0 1-5.533-45.75C283.615 366.669 302 335.03 302 301c0-52.383-42.617-95-95-95s-95 42.617-95 95c0 34.03 18.386 65.668 47.981 82.568a25 25 0 0 1 12.423 24.712 25 25 0 0 1-17.956 21.038C81.037 450.276 27.564 513.617 17.657 588">
+                  </path>
                 </svg>
                 <p>Account</p>
               </a>
-              <a
-                href="/user/downloads"
-                class="px-[25px] h-[45px] w-full flex items-center gap-3 text-[#121212] hover:bg-[#f0f0f0]"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="-49 141 512 512"
-                  width="16"
-                  height="16"
-                  aria-hidden="true"
-                  fill="currentColor"
-                >
+              <a href="/user/downloads"
+                class="px-[25px] h-[45px] w-full flex items-center gap-3 text-[#121212] hover:bg-[#f0f0f0]">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="-49 141 512 512" width="16" height="16"
+                  aria-hidden="true" fill="currentColor">
                   <path
-                    d="M438 403c-13.808 0-25 11.193-25 25v134c0 19.299-15.701 35-35 35H36c-19.299 0-35-15.701-35-35V428c0-13.807-11.193-25-25-25s-25 11.193-25 25v134c0 46.869 38.131 85 85 85h342c46.869 0 85-38.131 85-85V428c0-13.807-11.192-25-25-25"
-                  ></path>
+                    d="M438 403c-13.808 0-25 11.193-25 25v134c0 19.299-15.701 35-35 35H36c-19.299 0-35-15.701-35-35V428c0-13.807-11.193-25-25-25s-25 11.193-25 25v134c0 46.869 38.131 85 85 85h342c46.869 0 85-38.131 85-85V428c0-13.807-11.192-25-25-25">
+                  </path>
                   <path
-                    d="M189.322 530.678a25.004 25.004 0 0 0 35.356 0l84.853-84.853c9.763-9.763 9.763-25.592 0-35.355s-25.592-9.763-35.355 0L232 452.645V172c0-13.807-11.193-25-25-25s-25 11.193-25 25v280.645l-42.175-42.175c-9.764-9.763-25.592-9.763-35.355 0s-9.763 25.592 0 35.355z"
-                  ></path>
+                    d="M189.322 530.678a25.004 25.004 0 0 0 35.356 0l84.853-84.853c9.763-9.763 9.763-25.592 0-35.355s-25.592-9.763-35.355 0L232 452.645V172c0-13.807-11.193-25-25-25s-25 11.193-25 25v280.645l-42.175-42.175c-9.764-9.763-25.592-9.763-35.355 0s-9.763 25.592 0 35.355z">
+                  </path>
                 </svg>
                 <p>Downloads</p>
               </a>
             </div>
             <div class="border border-[#e5e5e5]"></div>
             <div class="mt-1">
-              <button
-                class="px-[25px] h-[45px] w-full flex items-center gap-3 text-[#121212] hover:bg-[#f0f0f0]"
-                @click.prevent="handleLogout"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="-49 141 512 512"
-                  width="16"
-                  height="16"
-                  aria-hidden="true"
-                  fill="currentColor"
-                >
+              <button class="px-[25px] h-[45px] w-full flex items-center gap-3 text-[#121212] hover:bg-[#f0f0f0]"
+                @click.prevent="handleLogout">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="-49 141 512 512" width="16" height="16"
+                  aria-hidden="true" fill="currentColor">
                   <path
-                    d="M207 372c-13.807 0-25-11.193-25-25V166c0-13.807 11.193-25 25-25s25 11.193 25 25v181c0 13.807-11.193 25-25 25"
-                  ></path>
+                    d="M207 372c-13.807 0-25-11.193-25-25V166c0-13.807 11.193-25 25-25s25 11.193 25 25v181c0 13.807-11.193 25-25 25">
+                  </path>
                   <path
-                    d="M370.342 258.658c-27.847-27.847-61.558-47.693-98.342-58.419v52.84C339.785 279.251 388 345.096 388 422c0 99.804-81.196 181-181 181S26 521.804 26 422c0-76.904 48.215-142.749 116-168.921v-52.84c-36.784 10.726-70.494 30.572-98.342 58.419C.028 302.288-24 360.298-24 422S.028 541.712 43.658 585.342 145.298 653 207 653s119.712-24.028 163.342-67.658S438 483.702 438 422s-24.028-119.712-67.658-163.342"
-                  ></path>
+                    d="M370.342 258.658c-27.847-27.847-61.558-47.693-98.342-58.419v52.84C339.785 279.251 388 345.096 388 422c0 99.804-81.196 181-181 181S26 521.804 26 422c0-76.904 48.215-142.749 116-168.921v-52.84c-36.784 10.726-70.494 30.572-98.342 58.419C.028 302.288-24 360.298-24 422S.028 541.712 43.658 585.342 145.298 653 207 653s119.712-24.028 163.342-67.658S438 483.702 438 422s-24.028-119.712-67.658-163.342">
+                  </path>
                 </svg>
                 <p>Logout</p>
               </button>
@@ -280,17 +260,9 @@ const handleLogout = () => {
 
     <!-- Mobile menu button -->
     <button class="md:hidden mobile-menu-button">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        fill="currentColor"
-        viewBox="0 0 16 16"
-      >
-        <path
-          fill-rule="evenodd"
-          d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"
-        />
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd"
+          d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
       </svg>
     </button>
   </header>

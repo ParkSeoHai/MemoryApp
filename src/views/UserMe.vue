@@ -12,14 +12,16 @@ const loading = ref(false);
 const realName = ref("");
 const profilePhoto = ref("");
 const email = ref("");
+const user = ref(null);
 
 const init = () => {
   loading.value = true;
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (user) {
-    realName.value = user.name;
-    profilePhoto.value = user.avatar;
-    email.value = user.email;
+  const userLocal = JSON.parse(localStorage.getItem("user"));
+  if (userLocal) {
+    user.value = userLocal;
+    realName.value = userLocal.name;
+    profilePhoto.value = userLocal.avatar;
+    email.value = userLocal.email;
   }
   loading.value = false;
 };
@@ -108,6 +110,18 @@ const focusRealName = () => {
   }
 };
 
+const formatDate = (dateString) => {
+  if (!dateString) return 'Không xác định';
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Không xác định';
+    return date.toLocaleDateString('vi-VN');
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return 'Không xác định';
+  }
+};
+
 onMounted(() => {
   init();
 });
@@ -122,31 +136,14 @@ onMounted(() => {
       <div v-if="!loading" class="content max-w-[768px] mx-auto mt-6 text-[#424242]">
         <h2 class="text-[20px] font-semibold mb-5">Profile details</h2>
         <div class="flex items-center gap-5 text-[14px] mb-5">
-          <img
-            v-if="!profilePhoto"
-            class="w-[128px] h-[128px] rounded-full object-cover"
-            src="https://avatar.freepik.com/default_01_313x313.png"
-          />
-          <img
-            v-else
-            class="w-[128px] h-[128px] rounded-full object-cover"
-            :src="profilePhoto"
-          />
+          <img v-if="!profilePhoto" class="w-[128px] h-[128px] rounded-full object-cover"
+            src="https://avatar.freepik.com/default_01_313x313.png" />
+          <img v-else class="w-[128px] h-[128px] rounded-full object-cover" :src="profilePhoto" />
           <div class="flex items-center gap-4">
-            <label
-              for="profilePhotoInput"
-              class="btn"
-              style="font-size: 14px; font-weight: 600"
-            >
+            <label for="profilePhotoInput" class="btn" style="font-size: 14px; font-weight: 600">
               Change photo
             </label>
-            <input
-              type="file"
-              accept="image/*"
-              class="hidden"
-              id="profilePhotoInput"
-              @change="handlePhotoChange"
-            />
+            <input type="file" accept="image/*" class="hidden" id="profilePhotoInput" @change="handlePhotoChange" />
             <p class="hover:underline cursor-pointer" @click="profilePhoto = ''">
               Remove
             </p>
@@ -157,19 +154,9 @@ onMounted(() => {
             <div class="flex flex-col gap-3 w-full">
               <label class="font-semibold text-[14px]" for="realName">Name</label>
               <div class="flex items-center gap-3 w-full">
-                <input
-                  class="px-4 p-2 text-[14px] bg-[#0000001a] focus:bg-white rounded-md min-w-[40%]"
-                  id="realName"
-                  type="text"
-                  placeholder="Enter name"
-                  v-model.trim="realName"
-                />
-                <button
-                  type="button"
-                  class="btn"
-                  style="font-weight: 600; font-size: 14px"
-                  @click="focusRealName"
-                >
+                <input class="px-4 p-2 text-[14px] bg-[#0000001a] focus:bg-white rounded-md min-w-[40%]" id="realName"
+                  type="text" placeholder="Enter name" v-model.trim="realName" />
+                <button type="button" class="btn" style="font-weight: 600; font-size: 14px" @click="focusRealName">
                   Edit
                 </button>
               </div>
@@ -183,6 +170,38 @@ onMounted(() => {
           </div>
         </div>
         <div class="pt-5 text-[14px] pb-5 border-b border-[#0000001a]">
+          <h3 class="text-[20px] font-semibold mb-4">Subscription Plan</h3>
+          <div v-if="user?.is_premium"
+            class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-lg p-4 mb-4">
+            <div class="flex items-center gap-3 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="20" height="20" fill="currentColor">
+                <path
+                  d="M486.2 50.2c-9.6-3.8-20.5-1.3-27.5 6.2l-98.2 125.5-83-161.1C273 13.2 264.9 8.5 256 8.5s-17.1 4.7-21.5 12.3l-83 161.1L53.3 56.5c-7-7.5-17.9-10-27.5-6.2C16.3 54 10 63.2 10 73.5v333c0 35.8 29.2 65 65 65h362c35.8 0 65-29.2 65-65v-333c0-10.3-6.3-19.5-15.8-23.3" />
+              </svg>
+              <span class="font-bold text-lg">{{ user?.plan || 'Premium Plan' }}</span>
+            </div>
+            <div class="space-y-1 text-sm">
+              <div>Ngày bắt đầu: {{ formatDate(user?.start || user?.start_date) }}</div>
+              <div>Ngày hết hạn: {{ formatDate(user?.end || user?.end_date) }}</div>
+              <div class="mt-2 text-xs opacity-90">
+                Bạn có thể tải xuống tất cả tài nguyên premium
+              </div>
+            </div>
+          </div>
+          <div v-else class="bg-gray-100 rounded-lg p-4 mb-4">
+            <div class="text-center">
+              <h4 class="font-semibold text-gray-700 mb-2">Chưa có gói Premium</h4>
+              <p class="text-sm text-gray-600 mb-3">
+                Nâng cấp lên Premium để truy cập tất cả tài nguyên
+              </p>
+              <a href="/pricing"
+                class="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium">
+                Xem các gói
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="pt-5 text-[14px] pb-5 border-b border-[#0000001a]">
           <h3 class="text-[20px] font-semibold mb-4">Connected accounts</h3>
           <p>
             Manage the social media accounts connected to your profile for easy login.
@@ -190,10 +209,7 @@ onMounted(() => {
           <div class="flex items-center mt-5">
             <div class="w-[40%] flex items-center justify-between">
               <div class="flex items-center gap-3">
-                <img
-                  class="w-[20px] h-[20px]"
-                  src="https://static.cdnpk.net/_next/static/media/google2.b530652f.svg"
-                />
+                <img class="w-[20px] h-[20px]" src="https://static.cdnpk.net/_next/static/media/google2.b530652f.svg" />
                 <span class="font-bold">Google</span>
               </div>
               <span>Connected</span>
@@ -201,12 +217,8 @@ onMounted(() => {
           </div>
         </div>
         <div class="my-5 flex justify-end">
-          <button
-            type="button"
-            class="btn w-fit bg-[#3b82f6]"
-            style="font-weight: 600; font-size: 14px; color: white"
-            @click="changeInfor"
-          >
+          <button type="button" class="btn w-fit bg-[#3b82f6]" style="font-weight: 600; font-size: 14px; color: white"
+            @click="changeInfor">
             Save changes
           </button>
         </div>

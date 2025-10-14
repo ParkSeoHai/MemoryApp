@@ -42,38 +42,20 @@
               </div>
             </div>
 
-            <button
-              :class="buttonClass(plan)"
-              class="w-full py-2 rounded-md mb-4"
-              @click="openModal(plan)"
-            >
+            <button v-if="!user?.is_premium" :class="buttonClass(plan)" class="w-full py-2 rounded-md mb-4"
+              @click="openModal(plan)">
               {{ plan.cta }}
             </button>
+            <div v-else class="w-full py-2 rounded-md mb-4 bg-gray-100 text-gray-500 text-center border">
+              Bạn đã có gói Premium
+            </div>
 
-            <PaymentModal
-              :show="showModal"
-              :plan="selectedPlan"
-              @close="showModal = false"
-            />
+            <PaymentModal :show="showModal" :plan="selectedPlan" @close="showModal = false" />
 
             <ul class="text-sm text-gray-600 space-y-2">
-              <li
-                v-for="(line, i) in plan.features"
-                :key="i"
-                class="flex items-start gap-2"
-              >
-                <svg
-                  class="w-4 h-4 text-green-500 mt-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M5 13l4 4L19 7"
-                  />
+              <li v-for="(line, i) in plan.features" :key="i" class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-green-500 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
                 <span>{{ line }}</span>
               </li>
@@ -90,11 +72,12 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import PaymentModal from "../components/PaymentModal.vue";
 
 const showModal = ref(false);
 const selectedPlan = ref(null);
+const user = ref(null);
 
 function openModal(plan) {
   selectedPlan.value = plan;
@@ -186,6 +169,13 @@ function cardClass(plan) {
 function buttonClass(plan) {
   return plan.id === "premium_plus" ? "bg-blue-600 text-white" : "bg-black text-white";
 }
+
+onMounted(() => {
+  const userLocal = localStorage.getItem("user");
+  if (userLocal && userLocal !== "undefined") {
+    user.value = JSON.parse(userLocal);
+  }
+});
 </script>
 
 <style scoped>
