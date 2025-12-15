@@ -6,7 +6,8 @@
 }
 
 #home .banner-image {
-    background-image: url("https://cdn-front.freepik.com/home/cover/anon-hero-x2.webp?w=2880");
+    /* Ảnh nền mới cùng chủ đề sáng tạo / thiết kế */
+    background-image: url("https://images.pexels.com/photos/2706379/pexels-photo-2706379.jpeg?auto=compress&cs=tinysrgb&w=2880");
     background-repeat: no-repeat;
     background-size: cover;
     height: 100%;
@@ -104,11 +105,11 @@
     display: none;
 }
 
-#home .home-designers__product--item img ~ div {
+#home .home-designers__product--item img~div {
     background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0))
 }
 
-#home .home-designers__product--item img:hover ~ div {
+#home .home-designers__product--item img:hover~div {
     background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.4))
 }
 
@@ -117,25 +118,25 @@
 #home .home-designers__product--item:nth-child(2),
 #home .home-designers__product--item:nth-child(7),
 #home .home-designers__product--item:nth-child(8) {
-  grid-column: span 2;
+    grid-column: span 2;
 }
 
 #home .home-designers__product--item:nth-child(3),
 #home .home-designers__product--item:nth-child(9) {
-  grid-column: span 3;
+    grid-column: span 3;
 }
 
 /* Hàng 2 */
 #home .home-designers__product--item:nth-child(4) {
-  grid-column: span 3;
+    grid-column: span 3;
 }
 
 #home .home-designers__product--item:nth-child(5),
 #home .home-designers__product--item:nth-child(6) {
-  grid-column: span 2;
+    grid-column: span 2;
 }
 
-#home .home-inspired__item .item-preview ~ div {
+#home .home-inspired__item .item-preview~div {
     opacity: 0;
     background: rgba(0, 0, 0, 0);
     transition: opacity 0.1s linear;
@@ -145,11 +146,11 @@
     display: none;
 }
 
-#home .home-inspired__item .item-preview:hover ~ div {
+#home .home-inspired__item .item-preview:hover~div {
     opacity: 1;
     background: rgba(0, 0, 0, 0.4);
 }
 
-#home .home-inspired__item .item-preview:hover ~ div .home-inspired__text {
+#home .home-inspired__item .item-preview:hover~div .home-inspired__text {
     display: block;
 }
