@@ -106,17 +106,6 @@ function LoginComponent() {
             </button>
           </div>
 
-          {/* Sign up Link */}
-          <div className="mt-8 pt-6 border-t border-gray-200 w-full text-center">
-            <p className="text-gray-600">
-              Don't have an account?{" "}
-              <a
-                href="/register"
-                className="text-blue-600 font-semibold hover:text-blue-700">
-                Sign up
-              </a>
-            </p>
-          </div>
         </div>
       </div>
 

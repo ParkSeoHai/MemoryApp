@@ -10,10 +10,7 @@ onMounted(() => {
 
 <template>
   <footer id="footer">
-    <div
-      class="container text-white"
-      style="padding-top: 40px; padding-bottom: 40px; border-bottom: 1px solid #424242"
-    >
+    <div class="container text-white" style="padding-top: 40px; padding-bottom: 40px; border-bottom: 1px solid #424242">
       <div class="grid grid-cols-4">
         <!-- <ul class="flex flex-col gap-2.5 text-[14px] text-[#777777] font-semibold">
           <li class="uppercase text-white">Tools</li>
@@ -41,38 +38,18 @@ onMounted(() => {
           <div class="flex flex-col gap-2.5 text-[14px] text-[#777777] font-semibold">
             <p class="uppercase text-white">Social media</p>
             <div class="grid grid-cols-4 gap-3 w-[183px]">
-              <a
-                href="#"
-                class="flex items-center justify-center hover:text-white w-[35px] h-[35px] rounded-sm bg-[#1877f2]"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 512 512"
-                  width="17"
-                  height="17"
-                  fill="#fff"
-                  aria-hidden="true"
-                >
+              <a href="#"
+                class="flex items-center justify-center hover:text-white w-[35px] h-[35px] rounded-sm bg-[#1877f2]">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="17" height="17" fill="#fff"
+                  aria-hidden="true">
                   <path
-                    d="M501 257.5c0-135.3-109.7-245-245-245S11 122.2 11 257.5c0 122.3 89.6 223.6 206.7 242V328.3h-62.2v-70.8h62.2v-54c0-61.4 36.6-95.3 92.5-95.3 26.8 0 54.8 4.8 54.8 4.8v60.3h-30.9c-30.4 0-39.9 18.9-39.9 38.3v46h67.9l-10.9 70.8h-57.1v171.2C411.4 481.1 501 379.8 501 257.5"
-                  ></path>
+                    d="M501 257.5c0-135.3-109.7-245-245-245S11 122.2 11 257.5c0 122.3 89.6 223.6 206.7 242V328.3h-62.2v-70.8h62.2v-54c0-61.4 36.6-95.3 92.5-95.3 26.8 0 54.8 4.8 54.8 4.8v60.3h-30.9c-30.4 0-39.9 18.9-39.9 38.3v46h67.9l-10.9 70.8h-57.1v171.2C411.4 481.1 501 379.8 501 257.5">
+                  </path>
                 </svg>
               </a>
             </div>
           </div>
-          <div class="mt-5">
-            <p class="text-[15px] text-[#777777] font-semibold">
-              Get exclusive assets sent straight to your inbox
-            </p>
-            <a
-              v-if="!user"
-              href="/register"
-              class="w-fit btn bg-[#336aea] mt-3"
-              style="color: #fff; border: none; font-size: 15px; padding: 10px 25px"
-            >
-              Sign in
-            </a>
-          </div>
+
         </div>
       </div>
     </div>
@@ -115,7 +92,7 @@ onMounted(() => {
           <img src="/logo.svg" class="w-[65px] h-[65px] mt-[8px]" />
         </a>
         <p class="text-[14px] text-[#c8c8c8]">
-          Copyright © 2010-2025 Memory Company S.L. All rights reserved.
+          Copyright © 2010-2025 Designed & developed by Nguyen Duc Hai HSB
         </p>
       </div>
     </div>
